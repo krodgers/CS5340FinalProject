@@ -1,11 +1,24 @@
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.InputStream;
 import java.util.ArrayList;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
 
 
 /**
@@ -16,8 +29,38 @@ import opennlp.tools.tokenize.TokenizerModel;
  */
 public class PreProcessing {
 	
-	public static void stripXML()
+	private ArrayList<NounPhrase> corefs = new ArrayList<NounPhrase>();
+	/**
+	 * Strips the XML tags out of the file.  
+	 * Creates a list of NounPhrases that are in the coref brackets
+	 * @param file  the xml file
+	 */
+	public void stripXML(File file)
 	{
+		DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+		DocumentBuilder builder;
+		try {
+			builder = fact.newDocumentBuilder();
+			Document input = builder.parse(file);
+			input.getDocumentElement().normalize();
+			NodeList corefNodes = input.getElementsByTagName("COREF");
+			for(int x = 0; x < corefNodes.getLength(); x++)
+			{
+				NounPhrase temp = new NounPhrase(corefNodes.item(x).getTextContent());
+				corefs.add(temp);
+			}
+			NodeList textNodes = input.getElementsByTagName("TXT");
+			String s = textNodes.item(0).getTextContent();
+			File tempXML = new File("tempXML.txt");
+			BufferedWriter bw = new BufferedWriter(new FileWriter(tempXML));
+			bw.write(s);
+			bw.close();
+			
+		} catch (Exception e) {
+			System.err.println("Problems stripping XML");
+			e.printStackTrace();
+		}
+	
 		
 	}
 		private ArrayList<String> sentences;
@@ -239,4 +282,4 @@ public class PreProcessing {
 			return fused;
 		}
 	}
-}
+

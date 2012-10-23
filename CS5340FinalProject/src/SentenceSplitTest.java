@@ -8,6 +8,11 @@ public class SentenceSplitTest {
 	 */
 	public static void main(String[] args) {
 		PreProcessing processTest = new PreProcessing();
+		
+		File inputFile = new File("xmlTest.txt");
+		processTest.stripXML(inputFile);
+		
+		
 		ArrayList<String[]> paragraphs = new ArrayList<String[]>();
 		processTest.paragraphSplitterFileWriter(new File("3.txt"));
 		processTest.tokenize();
