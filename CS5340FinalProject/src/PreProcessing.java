@@ -26,6 +26,10 @@ import org.w3c.dom.NodeList;
 
 import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
+import edu.stanford.nlp.ie.AbstractSequenceClassifier;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.ling.CoreLabel;
+
 
 /**
  * Methods to for preprocessing input files
@@ -289,10 +293,7 @@ public class PreProcessing {
 			return fused;
 		}
 		
-		/**
-		 * Using open nlp's partial parser(chunker) we create the
-		 * noun phrases!!!
-		 */
+		
 		public void partialParse(){
 			ChunkerME chunker;
 			ChunkerModel model;
@@ -318,11 +319,6 @@ public class PreProcessing {
 			
 		}
 		
-		/**
-		 * This is a private helper method for the partial parser.
-		 * This method takes the results of the partial parser and makes
-		 * noun phrases out of it!!!!
-		 */
 		private void chunksToNP(ArrayList<String[]> chunks){
 			ArrayList<NounPhrase> NPs = new ArrayList<NounPhrase>(chunks.size()*2);
 			
@@ -342,6 +338,49 @@ public class PreProcessing {
 			}
 			nounPhrases = new NounPhrase[NPs.size()];
 			NPs.toArray(nounPhrases);
+		}
+		
+		public void NERNouns(){
+			
+			String serializedClassifier = "english.all.3class.distsim.crf.ser.gz";
+			AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
+			
+			for(NounPhrase np : nounPhrases){
+				String classification = classifier.classifyWithInlineXML(np.getPhrase());
+				extractNE(np, classification);
+	
+			}
+			System.out.println("here");
+		}
+/*
+		private void extractNE(NounPhrase np, String classification) {
+			String delims = "[ ]+";
+			String[] temp = classification.split(delims);
+			for(int i = 0; i < temp.length; i++){
+				if(temp[i].contains("<ORGANIZATION>"))
+					np.addNamedEntity(temp[i], NounPhrase.Classification.ORGANIZATION);
+				if(temp[i].contains("<PERSON>"))
+					np.addNamedEntity(temp[i], NounPhrase.Classification.PERSON);
+				if(temp[i].contains("<LOCATION>"))
+					np.addNamedEntity(temp[i], NounPhrase.Classification.LOCATION);
+				
+			}
+			
+		}
+		*/
+		private void extractNE(NounPhrase np, String classification) {
+			String delims = "[ ]+";
+			String[] temp = classification.split(delims);
+			for(int i = 0; i < temp.length; i++){
+				if(temp[i].contains("<ORGANIZATION>"))
+					np.addNamedEntity(temp[i], NounPhrase.Classification.ORGANIZATION);
+				if(temp[i].contains("<PERSON>"))
+					np.addNamedEntity(temp[i], NounPhrase.Classification.PERSON);
+				if(temp[i].contains("<LOCATION>"))
+					np.addNamedEntity(temp[i], NounPhrase.Classification.LOCATION);
+				
+			}
+			
 		}
 	}
 
