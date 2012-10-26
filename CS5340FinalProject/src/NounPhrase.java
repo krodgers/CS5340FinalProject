@@ -9,6 +9,7 @@ public class NounPhrase {
 	private Classification classification;  // NER classification
 	private Gender gender;
 	private Boolean plural;
+	private int sentenceID;
 	
 	
 	public NounPhrase(String content) {
@@ -18,5 +19,10 @@ public class NounPhrase {
 		classification = Classification.NONE;
 		 gender  = Gender.NONE;
 		 plural = null;
+	}
+	
+	public NounPhrase(String content, int sentID){
+		this(content);
+		sentenceID = sentID;		
 	}
 }

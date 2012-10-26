@@ -4,21 +4,27 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import opennlp.tools.chunker.ChunkerME;
+import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
 import opennlp.tools.sentdetect.SentenceModel;
 import opennlp.tools.tokenize.TokenizerME;
 import opennlp.tools.tokenize.TokenizerModel;
+import opennlp.tools.util.InvalidFormatException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+
+import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 
 /**
@@ -64,6 +70,7 @@ public class PreProcessing {
 		
 	}
 		private ArrayList<String> sentences;
+		private NounPhrase[] nounPhrases;
 		private ArrayList<String[]> tokenizedSentences;//the sentences tokenized
 		private ArrayList<String[]> tokenPosTags;//tags directly mapped to the tokenizedSentence ArrayList
 		//open nlp tools
@@ -280,6 +287,61 @@ public class PreProcessing {
 				fused.add(tempToken);
 			}
 			return fused;
+		}
+		
+		/**
+		 * Using open nlp's partial parser(chunker) we create the
+		 * noun phrases!!!
+		 */
+		public void partialParse(){
+			ChunkerME chunker;
+			ChunkerModel model;
+			ArrayList<String[]> chunks = new ArrayList<String[]>();
+			
+			try {
+				modelIn = new FileInputStream("en-chunker.bin");
+				model = new ChunkerModel(modelIn);
+				chunker = new ChunkerME(model);
+				
+				
+				for(int i = 0; i < tokenizedSentences.size(); i++){
+						chunks.add(chunker.chunk(tokenizedSentences.get(i), tokenPosTags.get(i)));
+					}
+			} catch (InvalidFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			chunksToNP(chunks);
+			
+		}
+		
+		/**
+		 * This is a private helper method for the partial parser.
+		 * This method takes the results of the partial parser and makes
+		 * noun phrases out of it!!!!
+		 */
+		private void chunksToNP(ArrayList<String[]> chunks){
+			ArrayList<NounPhrase> NPs = new ArrayList<NounPhrase>(chunks.size()*2);
+			
+			for(int i = 0; i < chunks.size(); i++){//cycle through each sentence
+				int arrSize = chunks.get(i).length;//cycle through the sentences np chunks
+				for(int j = 0; j < arrSize; j++){
+					if(chunks.get(i)[j].equals("B-NP")){
+						String theNP = tokenizedSentences.get(i)[j] + " ";
+						j++;
+						while(j < arrSize && !chunks.get(i)[j].contains("B-")){
+							theNP += tokenizedSentences.get(i)[j] + " ";
+							j++;
+						}
+						NPs.add(new NounPhrase(theNP, i));
+					}
+				}
+			}
+			nounPhrases = new NounPhrase[NPs.size()];
+			NPs.toArray(nounPhrases);
 		}
 	}
 
