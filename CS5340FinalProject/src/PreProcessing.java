@@ -6,11 +6,11 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
 import opennlp.tools.postag.POSModel;
@@ -23,12 +23,12 @@ import opennlp.tools.util.InvalidFormatException;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
+import org.xml.sax.InputSource;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
+
 
 
 /**
@@ -350,37 +350,39 @@ public class PreProcessing {
 				extractNE(np, classification);
 	
 			}
-			System.out.println("here");
 		}
-/*
-		private void extractNE(NounPhrase np, String classification) {
-			String delims = "[ ]+";
-			String[] temp = classification.split(delims);
-			for(int i = 0; i < temp.length; i++){
-				if(temp[i].contains("<ORGANIZATION>"))
-					np.addNamedEntity(temp[i], NounPhrase.Classification.ORGANIZATION);
-				if(temp[i].contains("<PERSON>"))
-					np.addNamedEntity(temp[i], NounPhrase.Classification.PERSON);
-				if(temp[i].contains("<LOCATION>"))
-					np.addNamedEntity(temp[i], NounPhrase.Classification.LOCATION);
-				
-			}
+
+		
+		private void extractNE(NounPhrase np, String classification){
+					classification = "<TEXT>" + classification +"</TEXT>";
+			        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			        try{
+			        DocumentBuilder builder = factory.newDocumentBuilder();
+			        InputSource is = new InputSource(new StringReader(classification));
+			        Document doc = builder.parse(is);
+			        
+			        NodeList nodes = doc.getElementsByTagName("ORGANIZATION");
+			        for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.ORGANIZATION);
+			        	System.out.println(bob + " Org");
+			        } 
+			        nodes = doc.getElementsByTagName("PERSON");
+			        for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(i).getTextContent();
+			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.LOCATION);
+			        	System.out.println(bob + " Pers");
+			        }
+			        nodes = doc.getElementsByTagName("LOCATION");
+		        	 for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.LOCATION);
+			          	System.out.println(bob + " Loc");
+		        	 }
+			        
+			        }catch(Exception e){e.printStackTrace();}
+		}
+}
 			
-		}
-		*/
-		private void extractNE(NounPhrase np, String classification) {
-			String delims = "[ ]+";
-			String[] temp = classification.split(delims);
-			for(int i = 0; i < temp.length; i++){
-				if(temp[i].contains("<ORGANIZATION>"))
-					np.addNamedEntity(temp[i], NounPhrase.Classification.ORGANIZATION);
-				if(temp[i].contains("<PERSON>"))
-					np.addNamedEntity(temp[i], NounPhrase.Classification.PERSON);
-				if(temp[i].contains("<LOCATION>"))
-					np.addNamedEntity(temp[i], NounPhrase.Classification.LOCATION);
-				
-			}
-			
-		}
-	}
+	
 
