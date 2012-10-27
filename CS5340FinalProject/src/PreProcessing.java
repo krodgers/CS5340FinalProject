@@ -5,11 +5,17 @@ import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+<<<<<<< HEAD
 
+=======
+import opennlp.tools.chunker.ChunkerME;
+import opennlp.tools.chunker.ChunkerModel;
+>>>>>>> f040017cb2de301e886bf0867d4586b7104b2706
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
@@ -19,6 +25,15 @@ import opennlp.tools.tokenize.TokenizerModel;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
+<<<<<<< HEAD
+=======
+import org.xml.sax.InputSource;
+
+import edu.stanford.nlp.ie.AbstractSequenceClassifier;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
+import edu.stanford.nlp.ling.CoreLabel;
+>>>>>>> f040017cb2de301e886bf0867d4586b7104b2706
+
 
 
 /**
@@ -281,5 +296,101 @@ public class PreProcessing {
 			}
 			return fused;
 		}
+<<<<<<< HEAD
 	}
+=======
+		
+		
+		public void partialParse(){
+			ChunkerME chunker;
+			ChunkerModel model;
+			ArrayList<String[]> chunks = new ArrayList<String[]>();
+			
+			try {
+				modelIn = new FileInputStream("en-chunker.bin");
+				model = new ChunkerModel(modelIn);
+				chunker = new ChunkerME(model);
+				
+				
+				for(int i = 0; i < tokenizedSentences.size(); i++){
+						chunks.add(chunker.chunk(tokenizedSentences.get(i), tokenPosTags.get(i)));
+					}
+			} catch (InvalidFormatException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			chunksToNP(chunks);
+			
+		}
+		
+		private void chunksToNP(ArrayList<String[]> chunks){
+			ArrayList<NounPhrase> NPs = new ArrayList<NounPhrase>(chunks.size()*2);
+			
+			for(int i = 0; i < chunks.size(); i++){//cycle through each sentence
+				int arrSize = chunks.get(i).length;//cycle through the sentences np chunks
+				for(int j = 0; j < arrSize; j++){
+					if(chunks.get(i)[j].equals("B-NP")){
+						String theNP = tokenizedSentences.get(i)[j] + " ";
+						j++;
+						while(j < arrSize && !chunks.get(i)[j].contains("B-")){
+							theNP += tokenizedSentences.get(i)[j] + " ";
+							j++;
+						}
+						NPs.add(new NounPhrase(theNP, i));
+					}
+				}
+			}
+			nounPhrases = new NounPhrase[NPs.size()];
+			NPs.toArray(nounPhrases);
+		}
+		
+		public void NERNouns(){
+			
+			String serializedClassifier = "english.all.3class.distsim.crf.ser.gz";
+			AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
+			
+			for(NounPhrase np : nounPhrases){
+				String classification = classifier.classifyWithInlineXML(np.getPhrase());
+				extractNE(np, classification);
+	
+			}
+		}
+
+		
+		private void extractNE(NounPhrase np, String classification){
+					classification = "<TEXT>" + classification +"</TEXT>";
+			        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			        try{
+			        DocumentBuilder builder = factory.newDocumentBuilder();
+			        InputSource is = new InputSource(new StringReader(classification));
+			        Document doc = builder.parse(is);
+			        
+			        NodeList nodes = doc.getElementsByTagName("ORGANIZATION");
+			        for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.ORGANIZATION);
+			        	System.out.println(bob + " Org");
+			        } 
+			        nodes = doc.getElementsByTagName("PERSON");
+			        for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(i).getTextContent();
+			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.LOCATION);
+			        	System.out.println(bob + " Pers");
+			        }
+			        nodes = doc.getElementsByTagName("LOCATION");
+		        	 for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.LOCATION);
+			          	System.out.println(bob + " Loc");
+		        	 }
+			        
+			        }catch(Exception e){e.printStackTrace();}
+		}
+}
+			
+	
+>>>>>>> f040017cb2de301e886bf0867d4586b7104b2706
 
