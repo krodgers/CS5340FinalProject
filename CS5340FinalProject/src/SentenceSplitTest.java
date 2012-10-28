@@ -11,14 +11,14 @@ public class SentenceSplitTest {
 		
 		File inputFile = new File("RawInput/3.crf");
 		processTest.stripXML(inputFile);
+				
 		
-		
-		ArrayList<String[]> paragraphs = new ArrayList<String[]>();
-		processTest.paragraphSplitterFileWriter(new File("tempXML.txt"));
+		processTest.splitSentences(new File("hobbstest.txt"));
 		processTest.tokenize();
 		processTest.posTag();
 		processTest.partialParse();
 		processTest.NERNouns();
+		ArrayList<String[]> paragraphs = new ArrayList<String[]>();
 		//paragraphs = processTest.fuseTagsForFunAndProfit();//possibly use for full parsing
 	}
 
