@@ -22,7 +22,7 @@ public class Hobb {
 		File input = new File("tempXML.txt");
 		tokenizer.splitSentences(input);
 		tokenizer.tokenize();
-		ArrayList<String[]> tokenSents = tokenizer.getTokenizedSentences;
+		ArrayList<String[]> tokenSents = tokenizer.getTokenizedSentences();
 		try{
 			InputStream modelIn = new FileInputStream("en-parser-chunking.bin");
 			ParserModel psrModel = new ParserModel(modelIn);
@@ -36,9 +36,7 @@ public class Hobb {
 		
 			for(Parse p : topParses)
 			{
-				
 				p.show();
-				
 			}
 		}
 		catch(Exception e)
@@ -53,7 +51,8 @@ public class Hobb {
 	{
 		
 	}
-	/* Takes an array and creates a string
+	
+	/** Takes an array and creates a string
 	 * So {the,dog,ran} would be "the dog ran "
 	 */
 	private String arrayToString(String[] strings) {

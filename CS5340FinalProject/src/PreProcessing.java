@@ -382,4 +382,12 @@ public class PreProcessing {
 
 			        }catch(Exception e){e.printStackTrace();}
 		}
+
+		/**
+		 * Allows access to tokenizedSentences variable
+		 * @return
+		 */
+		public ArrayList<String[]> getTokenizedSentences() {
+			return tokenizedSentences;
+		}
 }
