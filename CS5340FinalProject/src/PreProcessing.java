@@ -10,12 +10,9 @@ import java.util.ArrayList;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-<<<<<<< HEAD
 
-=======
 import opennlp.tools.chunker.ChunkerME;
 import opennlp.tools.chunker.ChunkerModel;
->>>>>>> f040017cb2de301e886bf0867d4586b7104b2706
 import opennlp.tools.postag.POSModel;
 import opennlp.tools.postag.POSTaggerME;
 import opennlp.tools.sentdetect.SentenceDetectorME;
@@ -25,14 +22,11 @@ import opennlp.tools.tokenize.TokenizerModel;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
-<<<<<<< HEAD
-=======
 import org.xml.sax.InputSource;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
->>>>>>> f040017cb2de301e886bf0867d4586b7104b2706
 
 
 
