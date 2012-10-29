@@ -20,6 +20,8 @@ public class SentenceSplitTest {
 		processTest.NERNouns();
 		ArrayList<String[]> paragraphs = new ArrayList<String[]>();
 		//paragraphs = processTest.fuseTagsForFunAndProfit();//possibly use for full parsing
+		parserUtil bob = new parserUtil();
+		System.out.println(bob.computeLevenshteinDistance("Lotto No.",	"Quick Pick No."));
 	}
 
 }
