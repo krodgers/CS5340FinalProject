@@ -38,7 +38,7 @@ import edu.stanford.nlp.ling.CoreLabel;
  *
  */
 public class PreProcessing {
-
+	
 	private ArrayList<NounPhrase> corefs = new ArrayList<NounPhrase>();
 	/**
 	 * Strips the XML tags out of the file.  
@@ -65,13 +65,13 @@ public class PreProcessing {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(tempXML));
 			bw.write(s);
 			bw.close();
-
+			
 		} catch (Exception e) {
 			System.err.println("Problems stripping XML");
 			e.printStackTrace();
 		}
-
-
+	
+		
 	}
 		private ArrayList<String> sentences;
 		private NounPhrase[] nounPhrases;
@@ -79,16 +79,16 @@ public class PreProcessing {
 		private ArrayList<String[]> tokenPosTags;//tags directly mapped to the tokenizedSentence ArrayList
 		//open nlp tools
 		InputStream modelIn = null;//different models need to be loaded for each task
-
-
+		
+		
 		public PreProcessing(){
 			sentences = new ArrayList<String>(20);
 			tokenizedSentences = new ArrayList<String[]>();
 			tokenPosTags = new ArrayList<String[]>();
 		}
-
+		
 		//begin sentence splitting code
-
+		
 		/**
 		 * Splits sentences by writing paragraphs to file then writing to file;
 		 * @param file
@@ -102,13 +102,15 @@ public class PreProcessing {
 				modelIn = new FileInputStream("en-sent.bin");
 				model = new SentenceModel(modelIn);
 				splitter = new SentenceDetectorME(model);
-				fileToParagraphs(file, tempOut);
-
+				
 				//open the temp out file and parse the paragraphs one line at a time
-				reader = new BufferedReader(new FileReader(tempOut));
+				reader = new BufferedReader(new FileReader(file));
 				String line;
 				String[] temp;
 				while((line = reader.readLine()) != null){
+					line = line.trim();
+					if(line.equals(""))
+						continue;
 					temp = splitter.sentDetect(line); //run the splitter which returns an array
 					for(int i = 0; i < temp.length; i++)//add each split sentence to the list of sentences
 						sentences.add(temp[i]);
@@ -127,96 +129,6 @@ public class PreProcessing {
 				}
 			}
 		}
-
-		/**
-		 * File reads in a file and writes each paragraph on its own line
-		 * @param paragraphs
-		 * @param inFile
-		 * @param outFile
-		 */
-		public void fileToParagraphs(File inFile, File outFile){
-			BufferedReader reader = null; 
-			BufferedWriter writer = null;
-			try{
-				reader = new BufferedReader(new FileReader(inFile));
-				writer = new BufferedWriter(new FileWriter(outFile));
-				String para = "";
-				String currentSentence;
-				//read in splitting into paragraphs
-				while((currentSentence = reader.readLine()) != null){
-					para += currentSentence;
-					if(currentSentence.equals("") && !para.equals("")){
-						writer.write(para + "\n");
-						para = "";
-					}
-				}
-			}catch(Exception e){
-
-			}
-				try{
-					reader.close();
-					writer.close();
-				}catch(Exception e){
-					e.printStackTrace();
-			}
-		}
-
-		/**
-		 * Splits sentences without writing to file
-		 * @param file
-		 */
-		public void paragraphSplitterFileWriter(File file){
-			SentenceModel model = null;
-			SentenceDetectorME splitter = null;
-			try{
-				modelIn = new FileInputStream("en-sent.bin");
-				model = new SentenceModel(modelIn);
-				splitter = new SentenceDetectorME(model);
-				fileToParagraphs(file);
-				String[] temp;
-				ArrayList<String> tempSent = new ArrayList<String>();
-				for(String parag : sentences){
-					temp = splitter.sentDetect(parag);
-					for(int i = 0; i < temp.length; i++){
-						tempSent.add(temp[i]);
-					}
-				}
-				sentences = tempSent;
-			}
-			catch(Exception e){
-				e.printStackTrace();
-			}
-		}
-
-		/**
-		 * This method writes to the paragraphs parameter a list of paragraphs read in from
-		 * the file.
-		 * @param paragraphs place to put the paragraphs
-		 * @param inFile The file to read in
-		 */
-		public void fileToParagraphs(File inFile){
-			if(sentences == null){
-				sentences = new ArrayList<String>();
-			}
-			BufferedReader reader = null; 
-			try{
-				reader = new BufferedReader(new FileReader(inFile));
-				String para = "";
-				String currentSentence;
-				//read in splitting into paragraphs
-				while((currentSentence = reader.readLine()) != null){
-					para += currentSentence;
-					if(currentSentence.equals("") && !para.equals("")){
-						sentences.add(para);
-						para = "";
-					}
-				}
-			}catch(Exception e){
-				e.printStackTrace();
-			}
-		}	
-
-
 		//end sentence splitting code
 		/**
 		 * Tokenizes the sentence arrayList. The result of
@@ -232,7 +144,7 @@ public class PreProcessing {
 				modelIn = new FileInputStream("en-token.bin");
 				model = new TokenizerModel(modelIn);//initialize model
 				tokenizer = new TokenizerME(model);
-
+				
 				//Tokenize each sentence
 				for(String sentence : sentences){
 					tokenizedSentences.add(tokenizer.tokenize(sentence));
@@ -241,7 +153,7 @@ public class PreProcessing {
 				e.printStackTrace();
 			}
 		}
-
+		
 		/**
 		 * This method will POSTag the array list of tokenized sentences
 		 * The result of the tagging will be an arrayList of posTags
@@ -255,17 +167,17 @@ public class PreProcessing {
 				modelIn = new FileInputStream("en-pos-maxent.bin");
 				model = new POSModel(modelIn);
 				tagger = new POSTaggerME(model);
-
+				
 				//tag each tokenized sentence array
 				for(String[] sentArray : tokenizedSentences){
 					tokenPosTags.add(tagger.tag(sentArray));
 				}
-
+				
 			}catch(Exception e){
 				e.printStackTrace();
 			}
 		}
-
+		
 		/**
 		 * combines the tokenized sentences with the tags in the form "word/tag".
 		 * @return an array list of fused tokens
@@ -284,7 +196,7 @@ public class PreProcessing {
 					if(tokenPosTags.get(i)[j] != null && tokenizedSentences.get(i)[j] != null){
 						fusedString = tokenizedSentences.get(i)[j];
 						fusedString +=	"/" + tokenPosTags.get(i)[j];
-
+							
 					}
 					tempToken[j] = fusedString;//add the fused string to the temp tokenized sentenc
 				}
@@ -292,19 +204,19 @@ public class PreProcessing {
 			}
 			return fused;
 		}
-
-
+		
+		
 		public void partialParse(){
 			ChunkerME chunker;
 			ChunkerModel model;
 			ArrayList<String[]> chunks = new ArrayList<String[]>();
-
+			
 			try {
 				modelIn = new FileInputStream("en-chunker.bin");
 				model = new ChunkerModel(modelIn);
 				chunker = new ChunkerME(model);
-
-
+				
+				
 				for(int i = 0; i < tokenizedSentences.size(); i++){
 						chunks.add(chunker.chunk(tokenizedSentences.get(i), tokenPosTags.get(i)));
 					}
@@ -316,12 +228,12 @@ public class PreProcessing {
 				e.printStackTrace();
 			}
 			chunksToNP(chunks);
-
+			
 		}
-
+		
 		private void chunksToNP(ArrayList<String[]> chunks){
 			ArrayList<NounPhrase> NPs = new ArrayList<NounPhrase>(chunks.size()*2);
-
+			
 			for(int i = 0; i < chunks.size(); i++){//cycle through each sentence
 				int arrSize = chunks.get(i).length;//cycle through the sentences np chunks
 				for(int j = 0; j < arrSize; j++){
@@ -339,20 +251,20 @@ public class PreProcessing {
 			nounPhrases = new NounPhrase[NPs.size()];
 			NPs.toArray(nounPhrases);
 		}
-
+		
 		public void NERNouns(){
-
+			
 			String serializedClassifier = "english.all.3class.distsim.crf.ser.gz";
 			AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
-
+			
 			for(NounPhrase np : nounPhrases){
 				String classification = classifier.classifyWithInlineXML(np.getPhrase());
 				extractNE(np, classification);
-
+	
 			}
 		}
 
-
+		
 		private void extractNE(NounPhrase np, String classification){
 					classification = "<TEXT>" + classification +"</TEXT>";
 			        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
@@ -360,7 +272,7 @@ public class PreProcessing {
 			        DocumentBuilder builder = factory.newDocumentBuilder();
 			        InputSource is = new InputSource(new StringReader(classification));
 			        Document doc = builder.parse(is);
-
+			        
 			        NodeList nodes = doc.getElementsByTagName("ORGANIZATION");
 			        for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(0).getTextContent();
@@ -379,15 +291,10 @@ public class PreProcessing {
 			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.LOCATION);
 			          	System.out.println(bob + " Loc");
 		        	 }
-
+			        
 			        }catch(Exception e){e.printStackTrace();}
 		}
-
-		/**
-		 * Allows access to tokenizedSentences variable
-		 * @return
-		 */
-		public ArrayList<String[]> getTokenizedSentences() {
-			return tokenizedSentences;
-		}
 }
+			
+	
+
