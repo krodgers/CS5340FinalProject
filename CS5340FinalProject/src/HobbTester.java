@@ -1,3 +1,5 @@
+import java.io.File;
+
 
 public class HobbTester {
 
@@ -7,7 +9,8 @@ public class HobbTester {
 	 */
 	public static void main(String[] args) {
 		Hobb h = new Hobb();
-		h.fullParseOpenNLP();
+		File input = new File("HobbsTestFile.txt");
+		h.fullParseStanford(input);
 
 	}
 
