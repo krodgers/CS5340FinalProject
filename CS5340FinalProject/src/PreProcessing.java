@@ -85,6 +85,7 @@ public class PreProcessing {
 			sentences = new ArrayList<String>(20);
 			tokenizedSentences = new ArrayList<String[]>();
 			tokenPosTags = new ArrayList<String[]>();
+			corefs = new ArrayList<NounPhrase>();
 		}
 		
 		//begin sentence splitting code
@@ -293,6 +294,14 @@ public class PreProcessing {
 		        	 }
 			        
 			        }catch(Exception e){e.printStackTrace();}
+		}
+
+		/**
+		 * Returns the member variable Sentences
+		 * @return
+		 */
+		public ArrayList<String> getSentences() {
+			return this.sentences;
 		}
 }
 			
