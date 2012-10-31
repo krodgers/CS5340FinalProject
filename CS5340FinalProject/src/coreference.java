@@ -77,8 +77,8 @@ public class coreference {
 			//Preprocess
 			//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 			try {
-				sr.skip(currChunk.length()-startIdx);
-				sr.mark(0);
+				sr.skip(currChunk.length());
+				sr.mark(0); //marks where the next chunk should start
 				
 			} catch (Exception e) {
 				System.err.println("Problems with String Reader");
