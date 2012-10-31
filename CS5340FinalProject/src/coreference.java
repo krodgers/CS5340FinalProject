@@ -69,6 +69,9 @@ public class coreference {
 		
 		
 		//Iterate over the splitArray:
+		/**
+		 * This part is experimental.  
+		 */
 		for(int i = 0; i < Array.getLength(corefSplit); i++)
 		{
 			String currChunk = corefSplit[i];
@@ -84,6 +87,9 @@ public class coreference {
 				System.err.println("Problems with String Reader");
 				e.printStackTrace();
 			}
+			/**
+			 * 
+			 */
 					//Should return/end/result in list of NP candidates w/ features filled out
 				//Proceed to match
 			//String matching
