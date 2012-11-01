@@ -46,4 +46,21 @@ public class NounPhrase {
 			classification = classif;
 		}
 	}
+
+	/**
+	 * Returns this NP's id
+	 * 
+	 */
+	public String getId() {
+		
+		return this.id;
+	}
+	/**
+	 * Returns this NP's ref
+	 * 
+	 */
+	public String getRef() {
+		
+		return this.ref;
+	}
 }

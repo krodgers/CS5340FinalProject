@@ -19,40 +19,17 @@ import opennlp.tools.parser.*;
 import opennlp.tools.util.Span;
 public class Hobb {
 
-	public void fullParseOpenNLP()
+	/**
+	 * Runs Hobb's algorithm 
+	 * @param NP	The noun phrase containing the pronoun
+	 * @param context	The sentence containing NP and previous sentences
+	 * @return  true if a coreferent NP is found
+	 */
+	public boolean runHobbs(String NP, String context)
 	{
-//		//Tokenize Sentences
-//		PreProcessing tokenizer = new PreProcessing();
-//		File input = new File("tempXML.txt");
-//		tokenizer.splitSentences(input);
-//		tokenizer.tokenize();
-//		
-//		// Run full Parse
-//		ArrayList<String[]> tokenSents = tokenizer.getTokenizedSentences();
-//		try{
-//			InputStream modelIn = new FileInputStream("en-parser-chunking.bin");
-//			ParserModel psrModel = new ParserModel(modelIn);
-//			Parser parser = ParserFactory.create(psrModel);
-//			String line = arrayToString(tokenSents.get(3));
-//			Parse topParses[] = ParserTool.parseLine(line, parser, 1);
-//			
-//			Parse temp = Parse.parseParse(line);
-//			temp.show();
-//			temp.showCodeTree();
-//		
-//			for(Parse p : topParses)
-//			{
-//				p.show();
-//			}
-//		}
-//		catch(Exception e)
-//		{
-//			System.err.println("Problems with Full Parsing");
-//			e.printStackTrace();
-//		}
+		
+		return false;
 	}
-
-	
 	public void fullParseStanford(File input)
 	{
 		//Tokenize Sentences
