@@ -1,13 +1,17 @@
+import java.util.ArrayList;
+
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.Tree;
 
 
 
-public class parserUtil {
+public class ParserUtil {
 
-	LexicalizedParser lp;
-	public parserUtil() {
-		lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
+	static LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");;
+	
+	
+	public ParserUtil() {
+		
 	}
 
 	private int minimum(int a, int b, int c) {
@@ -36,10 +40,25 @@ public class parserUtil {
 
 	/**
 	 * Does a full parse of the sentence
+	 * Returns a list of Noun Phrase trees
 	 */
-	public Tree fullParse(String sentence)
+	public static ArrayList<Tree> fullParse(String sentence)
 	{
+		ArrayList<Tree> nounPhrases = new ArrayList<Tree>();
 		Tree parsed = lp.apply(sentence);
-		return parsed;
+		Tree domnp = null;
+		for(Tree t: parsed.preOrderNodeList())	                
+		{
+			if(t.isPhrasal())
+			{
+				if((t.label().value().equals("NP") && domnp==null) || (t.label().value().equals("NP") && !domnp.dominates(t)))
+				{
+					domnp = t;
+					nounPhrases.add(t);
+				}
+			}
+   		}
+		
+		return nounPhrases;
 	}
 }

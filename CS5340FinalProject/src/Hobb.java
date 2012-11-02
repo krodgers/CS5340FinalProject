@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.trees.CollinsHeadFinder;
+import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.Trees;
 
@@ -29,10 +31,11 @@ public class Hobb {
 	public boolean runHobbs(String NP, String context)
 	{
 		//Split sentences
-		String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London.";
+		String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London. The king of London is highly esteemed.";
 		//Do full parse of sentences
-		parserUtil pu = new parserUtil();
-		Tree parse = pu.fullParse(sentence);
+		
+		ArrayList<Tree> NPTrees = ParserUtil.fullParse(sentence);
+		
 		//Get the NP in order
 		ArrayList<NounPhrase> npList = new ArrayList<NounPhrase>();
 		/**
@@ -42,7 +45,7 @@ public class Hobb {
 			In S-2, L->R
 			In current sentence, L->R, starting from R of PRO
 		 */
-		npList.indexOf(new NounPhrase(NP));
+		
 		
 		return false;
 	}
