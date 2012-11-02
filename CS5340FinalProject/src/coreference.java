@@ -83,6 +83,20 @@ public class coreference {
 
 
 
+			/**
+			 * remove <TXT> </TXT> tags
+			 */
+			String replacement = corefSplit[0];
+			if(replacement.contains("<TXT>")){
+				replacement = replacement.substring(replacement.indexOf(">")+1).trim();
+				corefSplit[0] = replacement;
+			}
+			replacement = corefSplit[corefSplit.length-1];
+			if(replacement.contains("</TXT>")){
+				replacement = replacement.substring(0, replacement.lastIndexOf("</"));
+				corefSplit[corefSplit.length-1] = replacement;
+			}
+
 			//Iterate over the splitArray:
 			/**
 			 * This part is experimental.  
@@ -91,7 +105,13 @@ public class coreference {
 			{
 				String currChunk = corefSplit[i];
 				int startIdx = currChunk.indexOf(">");
+				//String currentCoref = currChunk.substring(startIdx);
+				//preserve coref Id
+				int idIndex = currChunk.indexOf("ID=\"")+4;
+				String idNum = currChunk.substring(idIndex, currChunk.indexOf('"', idIndex));
 				String currentCoref = currChunk.substring(startIdx);
+				
+				
 				//Preprocess
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 				try {
