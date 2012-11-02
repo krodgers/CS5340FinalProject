@@ -120,7 +120,7 @@ public class coreference {
 				//Add Sentence if not already there
 				//Hobbs
 				/**
-				 * Requires a full parse
+				 * Requires a full parse BUT CAN BE MODIFIED TO USE SHALLOW PARSE!
 				 * Good for pronoun resolution
 				 * 
 				 */

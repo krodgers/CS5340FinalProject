@@ -1,9 +1,13 @@
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.trees.Tree;
+
 
 
 public class parserUtil {
 
+	LexicalizedParser lp;
 	public parserUtil() {
-
+		lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 	}
 
 	private int minimum(int a, int b, int c) {
@@ -30,4 +34,12 @@ public class parserUtil {
 		return distance[str1.length()][str2.length()];
 	}
 
+	/**
+	 * Does a full parse of the sentence
+	 */
+	public Tree fullParse(String sentence)
+	{
+		Tree parsed = lp.apply(sentence);
+		return parsed;
+	}
 }

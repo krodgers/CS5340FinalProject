@@ -23,6 +23,15 @@ public class NounPhrase {
 		 plural = null;
 		 namedEntities = new ArrayList<NamedEntity>(5);
 	}
+	public NounPhrase(String content, String ID) {
+		phrase = content;
+		id = ID;
+		ref = null;
+		classification = Classification.NONE;
+		 gender  = Gender.NONE;
+		 plural = null;
+		 namedEntities = new ArrayList<NamedEntity>(5);
+	}
 	
 	public NounPhrase(String content, int sentID){
 		this(content);
@@ -63,4 +72,14 @@ public class NounPhrase {
 		
 		return this.ref;
 	}
+
+	/**
+	 * Implemented so as to be able to locate phrases in a list
+	 */
+	@Override
+	public boolean equals(Object obj) {
+		NounPhrase other = (NounPhrase) obj;
+		return this.phrase.equals(other.phrase) /*&& this.id.equals(other.id)*/;
+	}
+	
 }
