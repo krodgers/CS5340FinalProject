@@ -28,6 +28,7 @@ import org.xml.sax.InputSource;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.trees.Tree;
 
 
 
@@ -94,41 +95,30 @@ public class PreProcessing {
 		 * Splits sentences by writing paragraphs to file then writing to file;
 		 * @param file
 		 */
-		public void splitSentences(File file){
-			File tempOut = new File("temp.txt");
+		public ArrayList<String> splitSentences(String currentChunk){
 			SentenceModel model = null;
 			SentenceDetectorME splitter = null;
-			BufferedReader reader = null;
+			ArrayList<String> returnSentences = new ArrayList<String>();
 			try{
 				modelIn = new FileInputStream("en-sent.bin");
 				model = new SentenceModel(modelIn);
 				splitter = new SentenceDetectorME(model);
 				
 				//open the temp out file and parse the paragraphs one line at a time
-				reader = new BufferedReader(new FileReader(file));
-				String line;
+				
+				String line = currentChunk;
 				String[] temp;
-				while((line = reader.readLine()) != null){
-					line = line.trim();
-					if(line.equals(""))
-						continue;
-					temp = splitter.sentDetect(line); //run the splitter which returns an array
-					for(int i = 0; i < temp.length; i++)//add each split sentence to the list of sentences
-						sentences.add(temp[i]);
-				}
+				
+				line = line.trim();
+				temp = splitter.sentDetect(line); //run the splitter which returns an array
+				for(int i = 0; i < temp.length; i++)//add each split sentence to the list of sentences
+					returnSentences.add(temp[i]);
 			}
 			catch(Exception e){
 				e.printStackTrace();
+				return null;
 			}
-			finally{
-				try{
-					reader.close();
-					tempOut.deleteOnExit();
-				}
-				catch(Exception e){
-					e.printStackTrace();
-				}
-			}
+			return returnSentences;
 		}
 		//end sentence splitting code
 		/**
@@ -137,7 +127,7 @@ public class PreProcessing {
 		 * this method puts those arrays into an arrayList of token arrays.
 		 * could possibly read out to file if that is desired.
 		 */
-		public void tokenize(){
+		public String[] tokenize(String currChunk){
 			//set up tokenizer
 			TokenizerME tokenizer;
 			TokenizerModel model;
@@ -147,11 +137,10 @@ public class PreProcessing {
 				tokenizer = new TokenizerME(model);
 				
 				//Tokenize each sentence
-				for(String sentence : sentences){
-					tokenizedSentences.add(tokenizer.tokenize(sentence));
-				}
+				return tokenizer.tokenize(currChunk);
 			} catch (Exception e) {
 				e.printStackTrace();
+				return null;
 			}
 		}
 		
@@ -302,6 +291,21 @@ public class PreProcessing {
 		 */
 		public ArrayList<String> getSentences() {
 			return this.sentences;
+		}
+		
+		
+		public NounPhrase createNP(Tree npTree){
+			//extract pos tags
+			for(Tree t : npTree){
+				if(t.isPreTerminal())
+					t.label();
+			}
+			//find head nouns
+			//remove determiners
+			//find gender
+			//determine number
+			//mark if contains pronoun
+			return null;
 		}
 }
 			
