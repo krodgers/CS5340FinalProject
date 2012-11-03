@@ -27,6 +27,8 @@ public class coreference {
 		 * current label to give
 		 * 
 		 */
+		ArrayList<String[]> sentences = new ArrayList<String[]>();
+		PreProcessing processor = new PreProcessing();
 		//Read in Arguments
 		if(args.length != 2)
 		{
@@ -104,15 +106,26 @@ public class coreference {
 			for(int i = 0; i < Array.getLength(corefSplit); i++)
 			{
 				String currChunk = corefSplit[i];
+				if(!currChunk.contains("<COREF ID="))
+					continue;
 				int startIdx = currChunk.indexOf(">");
 				//String currentCoref = currChunk.substring(startIdx);
 				//preserve coref Id
 				int idIndex = currChunk.indexOf("ID=\"")+4;
 				String idNum = currChunk.substring(idIndex, currChunk.indexOf('"', idIndex));
 				String currentCoref = currChunk.substring(startIdx);
+				//preprocess
+				currChunk = currChunk.substring(0, currChunk.indexOf("<COREF")).trim();
 				
+				//split sentences
+				ArrayList<String> tempArr = processor.splitSentences(currChunk);
+				for(String s: tempArr){
+				//tokenize
+					String[] currChunkarr = processor.tokenize(currChunk);
+					sentences.add(currChunkarr);
+				}
+				//parse
 				
-				//Preprocess
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 				try {
 					sr.skip(currChunk.length());
@@ -122,7 +135,7 @@ public class coreference {
 					System.err.println("Problems with String Reader");
 					e.printStackTrace();
 				}
-
+				
 				ArrayList<NounPhrase> NPList = new ArrayList<NounPhrase>();
 				/**
 				 * 
@@ -169,9 +182,13 @@ public class coreference {
 					e.printStackTrace();
 				}
 			}
-		}
-
-
+			System.out.println("");
+			for(String s: sentences){
+				System.out.println(s);
+			}
+			System.out.println("");
+		
+		}	
 
 	}
 
@@ -197,5 +214,7 @@ public class coreference {
 		return files;
 
 	}
+	
+	
 
 }
