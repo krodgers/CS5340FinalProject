@@ -5,17 +5,20 @@ public class NounPhrase {
 	public enum Classification { NONE, PERSON, ORGANIZATION, LOCATION };
 	public enum Gender {NONE, MALE, FEMALE};
 	private String id;  // from <Coref id = ""
-	private String phrase; // <Coref > phrase </Coref>
+	//private String phrase; // <Coref > phrase </Coref>
 	private String ref; // from <Coref ref = ""
 	private Classification classification;  // NER classification
 	private Gender gender;
 	private Boolean plural;
 	private int sentenceID;
+	private ArrayList<String> posTags;
+	private ArrayList<String> phrase;
 	ArrayList<NamedEntity> namedEntities;
 	
 	
-	public NounPhrase(String content) {
-		phrase = content;
+	public NounPhrase() {
+		phrase = new ArrayList<String>();
+		posTags = new ArrayList<String>();
 		id = null;
 		ref = null;
 		classification = Classification.NONE;
@@ -23,23 +26,28 @@ public class NounPhrase {
 		 plural = null;
 		 namedEntities = new ArrayList<NamedEntity>(5);
 	}
-	public NounPhrase(String content, String ID) {
-		phrase = content;
-		id = ID;
-		ref = null;
-		classification = Classification.NONE;
-		 gender  = Gender.NONE;
-		 plural = null;
-		 namedEntities = new ArrayList<NamedEntity>(5);
-	}
+//	public NounPhrase(String content, String ID) {
+//		phrase.;
+//		id = ID;
+//		ref = null;
+//		classification = Classification.NONE;
+//		 gender  = Gender.NONE;
+//		 plural = null;
+//		 namedEntities = new ArrayList<NamedEntity>(5);
+//	}
 	
 	public NounPhrase(String content, int sentID){
-		this(content);
+		this();
 		sentenceID = sentID;		
 	}
 	
-	public String getPhrase(){
+	public ArrayList<String> getPhrase(){
 		return phrase;
+	}
+	
+	public void addToPhrase(String phraseTok, String posTag){
+		posTags.add(posTag);
+		phrase.add(phraseTok);		
 	}
 
 	public void addNamedEntity(String entityPhrase, Classification organization) {

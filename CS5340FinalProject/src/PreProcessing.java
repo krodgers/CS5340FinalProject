@@ -57,8 +57,8 @@ public class PreProcessing {
 			NodeList corefNodes = input.getElementsByTagName("COREF");
 			for(int x = 0; x < corefNodes.getLength(); x++)
 			{
-				NounPhrase temp = new NounPhrase(corefNodes.item(x).getTextContent());
-				corefs.add(temp);
+				//NounPhrase temp = new NounPhrase(corefNodes.item(x).getTextContent());
+				//corefs.add(temp);
 			}
 			NodeList textNodes = input.getElementsByTagName("TXT");
 			String s = textNodes.item(0).getTextContent();
@@ -242,17 +242,17 @@ public class PreProcessing {
 			NPs.toArray(nounPhrases);
 		}
 		
-		public void NERNouns(){
-			
-			String serializedClassifier = "english.all.3class.distsim.crf.ser.gz";
-			AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
-			
-			for(NounPhrase np : nounPhrases){
-				String classification = classifier.classifyWithInlineXML(np.getPhrase());
-				extractNE(np, classification);
-	
-			}
-		}
+//		public void NERNouns(){
+//			
+//			String serializedClassifier = "english.all.3class.distsim.crf.ser.gz";
+//			AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
+//			
+//			for(NounPhrase np : nounPhrases){
+//				String classification = classifier.classifyWithInlineXML(np.getPhrase());
+//				extractNE(np, classification);
+//	
+//			}
+//		}
 
 		
 		private void extractNE(NounPhrase np, String classification){
@@ -295,11 +295,23 @@ public class PreProcessing {
 		
 		
 		public NounPhrase createNP(Tree npTree){
+			ArrayList<NounPhrase> tempNps = new ArrayList<NounPhrase>();
 			//extract pos tags
 			for(Tree t : npTree){
-				if(t.isPreTerminal())
-					t.label();
+				NounPhrase temp = null;
+				if(t.isPreTerminal() || t.isPrePreTerminal()){
+					for(Tree preTerm: t.getChildrenAsList()){
+					 temp = new NounPhrase();
+						for(Tree leaf :t.getLeaves()){
+							if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
+								temp.addToPhrase(leaf.value(), preTerm.value());
+						}
+					}
+				}
+				if(temp!= null)
+					tempNps.add(temp);
 			}
+			System.out.println("");
 			//find head nouns
 			//remove determiners
 			//find gender

@@ -8,7 +8,11 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.StringTokenizer;
+
+import edu.stanford.nlp.process.PTBTokenizer;
+import edu.stanford.nlp.trees.Tree;
 
 
 public class coreference {
@@ -27,8 +31,9 @@ public class coreference {
 		 * current label to give
 		 * 
 		 */
-		ArrayList<String[]> sentences = new ArrayList<String[]>();
+		ArrayList<String> sentences = new ArrayList<String>();
 		PreProcessing processor = new PreProcessing();
+		HashMap<String, NounPhrase> nounPhraseList = new HashMap<String,NounPhrase>();
 		//Read in Arguments
 		if(args.length != 2)
 		{
@@ -53,7 +58,7 @@ public class coreference {
 				String line;
 				while((line = bf.readLine()) != null)
 				{
-					document += line;
+					document += line + " ";
 				}
 				bf.close();
 				//Split on <COREF ..... COREF/>
@@ -116,15 +121,19 @@ public class coreference {
 				String currentCoref = currChunk.substring(startIdx);
 				//preprocess
 				currChunk = currChunk.substring(0, currChunk.indexOf("<COREF")).trim();
-				
 				//split sentences
-				ArrayList<String> tempArr = processor.splitSentences(currChunk);
-				for(String s: tempArr){
-				//tokenize
-					String[] currChunkarr = processor.tokenize(currChunk);
-					sentences.add(currChunkarr);
-				}
+				ArrayList<String> unProcSentences = processor.splitSentences(currChunk);
+				
+				sentences.addAll(unProcSentences);
+								
 				//parse
+				for(String sent : unProcSentences){
+					//sent = arrayToString(processor.tokenize(currChunk));
+					ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
+					for(Tree t : npTrees){
+						processor.createNP(t);
+					}
+				}
 				
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 				try {
@@ -182,14 +191,20 @@ public class coreference {
 					e.printStackTrace();
 				}
 			}
-			System.out.println("");
-			for(String s: sentences){
-				System.out.println(s);
-			}
-			System.out.println("");
 		
 		}	
 
+	}
+	
+	/**
+	 * Returns String from array
+	 */
+	private static String arrayToString(String[] sentence){
+		String temp = "";
+		for(int i = 0; i < sentence.length; i ++){
+			temp += sentence[i] + " ";
+		}
+		return temp;
 	}
 
 	/**

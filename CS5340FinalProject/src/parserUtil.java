@@ -1,16 +1,17 @@
 import java.util.ArrayList;
 
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.parser.lexparser.Options;
 import edu.stanford.nlp.trees.Tree;
 
 
 
-public class ParserUtil {
+public class parserUtil {
 
 	static LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");;
 	
 	
-	public ParserUtil() {
+	public parserUtil() {
 		
 	}
 
@@ -45,6 +46,7 @@ public class ParserUtil {
 	public static ArrayList<Tree> fullParse(String sentence)
 	{
 		ArrayList<Tree> nounPhrases = new ArrayList<Tree>();
+		Options bob = new Options();
 		Tree parsed = lp.apply(sentence);
 		Tree domnp = null;
 		for(Tree t: parsed.preOrderNodeList())	                
