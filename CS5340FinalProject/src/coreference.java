@@ -13,6 +13,7 @@ import java.util.StringTokenizer;
 
 import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.util.StringUtils;
 
 
 public class coreference {
@@ -33,6 +34,7 @@ public class coreference {
 		 */
 		ArrayList<String> sentences = new ArrayList<String>();
 		PreProcessing processor = new PreProcessing();
+		ArrayList<NounPhrase> nounPhrasesNotMapRefactorMe = new ArrayList<NounPhrase>();
 		HashMap<String, NounPhrase> nounPhraseList = new HashMap<String,NounPhrase>();
 		//Read in Arguments
 		if(args.length != 2)
@@ -43,7 +45,7 @@ public class coreference {
 		String listFileName = args[0];  // list of files to process; FOR DEBUGGING USE listFile.txt
 		String dir = args[1];	// directory where to store response files; assumes the final / is included
 		ArrayList<String> testFiles = getTestFiles(listFileName);
-
+		StringMatcher matcher = new StringMatcher();
 		for(String fileName : testFiles)
 		{
 			//Read in the file as one big huge string
@@ -93,16 +95,9 @@ public class coreference {
 			/**
 			 * remove <TXT> </TXT> tags
 			 */
-			String replacement = corefSplit[0];
-			if(replacement.contains("<TXT>")){
-				replacement = replacement.substring(replacement.indexOf(">")+1).trim();
-				corefSplit[0] = replacement;
-			}
-			replacement = corefSplit[corefSplit.length-1];
-			if(replacement.contains("</TXT>")){
-				replacement = replacement.substring(0, replacement.lastIndexOf("</"));
-				corefSplit[corefSplit.length-1] = replacement;
-			}
+			corefSplit[0] = removeBegTXT(corefSplit[0]);
+			corefSplit[corefSplit.length-1] = removeFinTXT(corefSplit[corefSplit.length-1]);
+			
 
 			//Iterate over the splitArray:
 			/**
@@ -120,42 +115,66 @@ public class coreference {
 				String idNum = currChunk.substring(idIndex, currChunk.indexOf('"', idIndex));
 				String currentCoref = currChunk.substring(startIdx);
 				//preprocess
-				/**
-				 * commented out experimental partial parse
-				 */
 				currChunk = currChunk.substring(0, currChunk.indexOf("<COREF")).trim();
-//				//split sentences
-//				
-//				
-//				ArrayList<String[]> tokenedSents = new ArrayList<String[]>();
+				//split sentences
 				ArrayList<String> unProcSentences = processor.splitSentences(currChunk);
-//				sentences.addAll(unProcSentences);
-//				for(String s : unProcSentences){
-//					tokenedSents.add(processor.tokenize(s));
-//				}
-//				ArrayList<String[]> posTags = processor.posTag(tokenedSents);	
-//				String[] NPs = processor.partialParse(tokenedSents, posTags);
+				//end preprocess
 				
-				
-				
+				//process coref
+				NounPhrase phrase;
+				if(currentCoref.contains(">"))
+					currentCoref = currentCoref.replace(">", "");
+
+				ArrayList<Tree> corefNPTree = parserUtil.fullParse(currentCoref);
+				if(corefNPTree.isEmpty()){
+					System.out.println("Failed to parse coref ID=" + idNum + " FileName: " + fileName);
+					continue;
+				}
+				Tree corefTree = corefNPTree.get(0);
+				phrase = processor.createNP(corefTree);
+				phrase.setId(idNum);
+				System.out.println(phrase.getPhrase());
 				
 				//parse
-				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();
+				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();//this will be populated with np's extracted from unProcSentences
 				for(String sent : unProcSentences){
-					//sent = arrayToString(processor.tokenize(currChunk));
+					//parse the sentence
 					ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
+					//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
 					for(Tree t : npTrees){
 						NounPhrase addCandidate = processor.createNP(t);
 						if(addCandidate != null)
 							fullNPs.add(addCandidate);
 					}
 				}
-				System.out.println("\n" +  "fullParse Noun Phrases: ");
-				for(NounPhrase phrase: fullNPs){
-					String parsedPhrase = phrase.getPhrase();
-					System.out.println(parsedPhrase);
+				//print out block for debugging
+//				System.out.println("\n" +  "fullParse Noun Phrases: ");
+//				for(NounPhrase outPhrase: fullNPs){
+//					String parsedPhrase = outPhrase.getPhrase();
+//					System.out.println(parsedPhrase);
+//				}
+				//end print out block for debugging
+				
+				//add to hashmap of nounphrases
+				for(NounPhrase np: fullNPs){
+					nounPhraseList.put(np.getPhrase(), np);
+					nounPhrasesNotMapRefactorMe.add(np);
 				}
+				
+				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
+				matcher.setList(nounPhrasesNotMapRefactorMe);
+				matcher.setCoref(phrase);
+				int matchId = -1;
+				matchId = matcher.createScores();
+				if(matchId > -1){
+					matcher.CreateMatch(matchId);
+				}
+				nounPhrasesNotMapRefactorMe.add(phrase);
+				nounPhraseList.put(phrase.getPhrase(), phrase);
+				
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
+				
+				
 				try {
 					sr.skip(currChunk.length());
 					sr.mark(0); //marks where the next chunk should start
@@ -172,11 +191,14 @@ public class coreference {
 				//Should return/end/result in list of NP candidates w/ features filled out
 				//Proceed to match
 				//String matching
+				
+				
 				/**
 				 * Only needs list of NPs
 				 * 
 				 */
-				// Match Proper Nouns
+				// Match Named Entities
+				
 				// Match Head Nouns
 				// Match Full/Partial String
 				//Add Sentence if not already there
@@ -190,27 +212,12 @@ public class coreference {
 				//Matching unmatched corefs to previous NP based on how closely features match (gender,number,person,semantics)
 
 
-				//Print out results
-				String outFile = dir + filePrefix + ".response";
-				try {
-					BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
-					String res;
-					for(NounPhrase n : NPList )
-					{
-						if(!n.getId().isEmpty())
-						{
-							if(!n.getRef().isEmpty())
-								res = "<COREF ID = \"" + n.getId() + "\" REF = \"" + n.getRef() + "\"> " + n.getPhrase() + "</COREF> ";
-							else
-								res = "<COREF ID = \"" + n.getId() + "\"> " + n.getPhrase() + "</COREF> ";
-							bw.write(res, 0, res.length());
-						}	
-					}
-				} catch (Exception e) {
-					System.err.println("Problems writing results.");
-					e.printStackTrace();
-				}
+			
 			}
+			matcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir);
+			matcher.resetIdCounter();
+			nounPhrasesNotMapRefactorMe.clear();
+			nounPhraseList.clear();
 		
 		}	
 
@@ -247,7 +254,18 @@ public class coreference {
 			e.printStackTrace();
 		}
 		return files;
-
+	}
+	
+	private static String removeBegTXT(String doc){
+		if(doc.contains("<TXT>")){
+			doc =  doc.substring(doc.indexOf(">")+1).trim();
+		}
+		return doc;
+	}
+	private static String removeFinTXT(String doc){
+		if(doc.contains("</TXT>"))
+			doc = doc.substring(0, doc.lastIndexOf("</"));
+		return doc;
 	}
 	
 	

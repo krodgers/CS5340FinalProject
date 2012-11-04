@@ -39,10 +39,14 @@ public class NounPhrase {
 //		 plural = null;
 //		 namedEntities = new ArrayList<NamedEntity>(5);
 //	}
-	
-	public NounPhrase(String content, int sentID){
+	/**
+	 * constructor for coreferences
+	 * @param content the phrase
+	 * @param corefId the id from <COREF id = "
+	 */
+	public NounPhrase(String content, String corefId){
 		this();
-		sentenceID = sentID;		
+		id = corefId;		
 	}
 	
 	public String getPhrase(){
@@ -64,7 +68,6 @@ public class NounPhrase {
 
 	public void addNamedEntity(String entityPhrase, Classification organization) {
 		namedEntities.add(new NamedEntity(entityPhrase, organization));
-		
 	}
 	
 	class NamedEntity{
@@ -130,6 +133,15 @@ public class NounPhrase {
 					return i;
 		}
 		return -1;
+	}
+	public void setId(String idNum) {
+		id = idNum;
+	}
+	public ArrayList<NamedEntity> getNE(){
+		return namedEntities;
+	}
+	public void setRef(String refId){
+		ref = refId;
 	}
 	
 }
