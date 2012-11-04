@@ -1,17 +1,10 @@
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.StringReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.StringTokenizer;
 
-import edu.stanford.nlp.process.PTBTokenizer;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.StringUtils;
 
@@ -49,11 +42,8 @@ public class coreference {
 		for(String fileName : testFiles)
 		{
 			//Read in the file as one big huge string
-			String filePrefix = fileName.substring(fileName.lastIndexOf("/")+1, fileName.length()-4); 
-			
 			String document = "";
 			String[] corefSplit;
-			StringReader sr;
 			File input = new File(fileName);
 			try {
 				BufferedReader bf = new BufferedReader(new FileReader(input));
@@ -65,25 +55,7 @@ public class coreference {
 				bf.close();
 				//Split on <COREF ..... COREF/>
 				corefSplit = document.split("</COREF>");
-				sr = new StringReader(document);
-				int j=0;
-				for(int i = 0; i < Array.getLength(corefSplit); i++)
-				{
-					System.out.println(corefSplit[i] + "\n");
-					System.out.println("Length of string: " + (j = corefSplit[i].length()));
-					sr.skip(j+8);
-					sr.mark(0);
-					for(int k = 0; k < 10; k++)
-					{
-						int s = sr.read();
-						System.out.print((char)s);
-					}
-					sr.reset();
-					System.out.println();
-				}
 
-
-				System.out.println();
 			} catch (Exception e) {
 				System.err.println("Filed reading input file");
 				e.printStackTrace();
@@ -109,7 +81,6 @@ public class coreference {
 				if(!currChunk.contains("<COREF ID="))
 					continue;
 				int startIdx = currChunk.indexOf(">");
-				//String currentCoref = currChunk.substring(startIdx);
 				//preserve coref Id
 				int idIndex = currChunk.indexOf("ID=\"")+4;
 				String idNum = currChunk.substring(idIndex, currChunk.indexOf('"', idIndex));
@@ -174,17 +145,6 @@ public class coreference {
 				
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 				
-				
-				try {
-					sr.skip(currChunk.length());
-					sr.mark(0); //marks where the next chunk should start
-
-				} catch (Exception e) {
-					System.err.println("Problems with String Reader");
-					e.printStackTrace();
-				}
-				
-				ArrayList<NounPhrase> NPList = new ArrayList<NounPhrase>();
 				/**
 				 * 
 				 */
