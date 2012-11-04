@@ -120,21 +120,41 @@ public class coreference {
 				String idNum = currChunk.substring(idIndex, currChunk.indexOf('"', idIndex));
 				String currentCoref = currChunk.substring(startIdx);
 				//preprocess
+				/**
+				 * commented out experimental partial parse
+				 */
 				currChunk = currChunk.substring(0, currChunk.indexOf("<COREF")).trim();
-				//split sentences
+//				//split sentences
+//				
+//				
+//				ArrayList<String[]> tokenedSents = new ArrayList<String[]>();
 				ArrayList<String> unProcSentences = processor.splitSentences(currChunk);
+//				sentences.addAll(unProcSentences);
+//				for(String s : unProcSentences){
+//					tokenedSents.add(processor.tokenize(s));
+//				}
+//				ArrayList<String[]> posTags = processor.posTag(tokenedSents);	
+//				String[] NPs = processor.partialParse(tokenedSents, posTags);
 				
-				sentences.addAll(unProcSentences);
-								
+				
+				
+				
 				//parse
+				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();
 				for(String sent : unProcSentences){
 					//sent = arrayToString(processor.tokenize(currChunk));
 					ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 					for(Tree t : npTrees){
-						processor.createNP(t);
+						NounPhrase addCandidate = processor.createNP(t);
+						if(addCandidate != null)
+							fullNPs.add(addCandidate);
 					}
 				}
-				
+				System.out.println("\n" +  "fullParse Noun Phrases: ");
+				for(NounPhrase phrase: fullNPs){
+					String parsedPhrase = phrase.getPhrase();
+					System.out.println(parsedPhrase);
+				}
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 				try {
 					sr.skip(currChunk.length());

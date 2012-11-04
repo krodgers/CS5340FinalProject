@@ -1,3 +1,4 @@
+import java.awt.List;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -28,7 +29,11 @@ import org.xml.sax.InputSource;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.ling.Label;
+import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
+import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.Trees;
 
 
 
@@ -149,7 +154,7 @@ public class PreProcessing {
 		 * The result of the tagging will be an arrayList of posTags
 		 * stored in
 		 */
-		public void posTag(){
+		public ArrayList<String[]> posTag(ArrayList<String[]> sentArrays){
 			//set up tagger
 			POSTaggerME tagger;
 			POSModel model;
@@ -157,15 +162,18 @@ public class PreProcessing {
 				modelIn = new FileInputStream("en-pos-maxent.bin");
 				model = new POSModel(modelIn);
 				tagger = new POSTaggerME(model);
-				
+				ArrayList<String[]>posTags = new ArrayList<String[]>();
 				//tag each tokenized sentence array
-				for(String[] sentArray : tokenizedSentences){
-					tokenPosTags.add(tagger.tag(sentArray));
+				for(String[] sentArray : sentArrays){
+					posTags.add(tagger.tag(sentArray));
 				}
+				return posTags;
 				
 			}catch(Exception e){
 				e.printStackTrace();
+				return null;
 			}
+			
 		}
 		
 		/**
@@ -196,7 +204,7 @@ public class PreProcessing {
 		}
 		
 		
-		public void partialParse(){
+		public String[] partialParse(ArrayList<String[]> sentArr, ArrayList<String[]> posArr){
 			ChunkerME chunker;
 			ChunkerModel model;
 			ArrayList<String[]> chunks = new ArrayList<String[]>();
@@ -206,9 +214,8 @@ public class PreProcessing {
 				model = new ChunkerModel(modelIn);
 				chunker = new ChunkerME(model);
 				
-				
-				for(int i = 0; i < tokenizedSentences.size(); i++){
-						chunks.add(chunker.chunk(tokenizedSentences.get(i), tokenPosTags.get(i)));
+				for(int i = 0; i < sentArr.size(); i++){
+						 chunks.add(chunker.chunk(sentArr.get(i), posArr.get(i)));
 					}
 			} catch (InvalidFormatException e) {
 				// TODO Auto-generated catch block
@@ -217,45 +224,45 @@ public class PreProcessing {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			chunksToNP(chunks);
+			return chunksToNP(chunks, sentArr);
 			
 		}
 		
-		private void chunksToNP(ArrayList<String[]> chunks){
-			ArrayList<NounPhrase> NPs = new ArrayList<NounPhrase>(chunks.size()*2);
+		private String[] chunksToNP(ArrayList<String[]> chunks, ArrayList<String[]> tokSent){
+			ArrayList<String> NPs = new ArrayList<String>(chunks.size()*2);
 			
 			for(int i = 0; i < chunks.size(); i++){//cycle through each sentence
 				int arrSize = chunks.get(i).length;//cycle through the sentences np chunks
 				for(int j = 0; j < arrSize; j++){
 					if(chunks.get(i)[j].equals("B-NP")){
-						String theNP = tokenizedSentences.get(i)[j] + " ";
+						String theNP = tokSent.get(i)[j] + " ";
 						j++;
 						while(j < arrSize && !chunks.get(i)[j].contains("B-")){
-							theNP += tokenizedSentences.get(i)[j] + " ";
+							theNP += tokSent.get(i)[j] + " ";
 							j++;
 						}
-						NPs.add(new NounPhrase(theNP, i));
+						NPs.add(theNP);
 					}
 				}
 			}
-			nounPhrases = new NounPhrase[NPs.size()];
-			NPs.toArray(nounPhrases);
+			String[] nounPhrases = new String[NPs.size()];
+			return NPs.toArray(nounPhrases);
 		}
 		
-//		public void NERNouns(){
-//			
-//			String serializedClassifier = "english.all.3class.distsim.crf.ser.gz";
-//			AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
-//			
-//			for(NounPhrase np : nounPhrases){
-//				String classification = classifier.classifyWithInlineXML(np.getPhrase());
-//				extractNE(np, classification);
-//	
-//			}
-//		}
+		static AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions("english.all.3class.distsim.crf.ser.gz");
+		public void FindNer(NounPhrase nounPhrase){
+			String serializedClassifier = "";
+			String classification = classifier.classifyWithInlineXML(nounPhrase.getPhrase());
+			setNE(classification, nounPhrase);
+		}
 
-		
-		private void extractNE(NounPhrase np, String classification){
+		/**
+		 * This method takes a Named Entity classification(created by FindNER which uses Stanford NER)
+		 * and extracts the noun phrases and puts them into the np sent in as a param.
+		 * @param np
+		 * @param classification
+		 */
+		private void  setNE(String classification, NounPhrase np){
 					classification = "<TEXT>" + classification +"</TEXT>";
 			        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			        try{
@@ -284,6 +291,34 @@ public class PreProcessing {
 			        
 			        }catch(Exception e){e.printStackTrace();}
 		}
+		
+		private void setPronouns(NounPhrase phrase){
+			for(String tag: phrase.getPosTags()){
+				if(parserUtil.tagIsProunoun(tag)){
+					phrase.setPronoun(true);
+					return;
+				}
+			}
+		}
+		
+		private void determineNumber(NounPhrase phrase) {
+			//look at the pos tag of the head noun first
+			if(phrase.getHeadPhrase() != null){
+				int index = phrase.getHeadPhraseIndex();
+				if(index > -1){
+					String tag = phrase.getPosTags().get(index);
+					//nns and nnps are the two plural noun phrase tags
+					phrase.setPlural(parserUtil.tagIsPluralNoun(tag) ? true : false);
+				}
+			}
+			//this part is probably not needed
+			else{
+				for(String tag: phrase.getPosTags()){
+					phrase.setPlural(parserUtil.tagIsPluralNoun(tag) ? true : false);
+				}
+			}
+			
+		}
 
 		/**
 		 * Returns the member variable Sentences
@@ -297,28 +332,42 @@ public class PreProcessing {
 		public NounPhrase createNP(Tree npTree){
 			ArrayList<NounPhrase> tempNps = new ArrayList<NounPhrase>();
 			//extract pos tags
+			NounPhrase temp = new NounPhrase();
 			for(Tree t : npTree){
-				NounPhrase temp = null;
-				if(t.isPreTerminal() || t.isPrePreTerminal()){
-					for(Tree preTerm: t.getChildrenAsList()){
-					 temp = new NounPhrase();
-						for(Tree leaf :t.getLeaves()){
-							if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
-								temp.addToPhrase(leaf.value(), preTerm.value());
-						}
+				if(t.isPreTerminal()){
+					for(Tree leaf :t.getLeaves()){
+						if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
+							temp.addToPhrase(leaf.value(), t.value());
 					}
 				}
-				if(temp!= null)
-					tempNps.add(temp);
+			}	
+			if(temp.getPhrase() == null)
+			{
+				return null;
 			}
-			System.out.println("");
 			//find head nouns
-			//remove determiners
-			//find gender
+			CollinsHeadFinder headFinder = new CollinsHeadFinder();
+			Tree head = headFinder.determineHead(npTree);
+			String headPhrase = "";
+			//reconstruct the head phrase and add it to the temp noun phrase
+			for(Tree t: head.getChildrenAsList()){
+					for(Tree leaf : Trees.leaves(t)){
+						headPhrase += leaf.value() + " ";
+					}
+					temp.addHeadPhrase(headPhrase);
+			}
+			//find NER
+			FindNer(temp);
 			//determine number
-			//mark if contains pronoun
-			return null;
+			determineNumber(temp);
+			/*remove determiners
+			find gender
+			mark if contains pronoun*/
+			setPronouns(temp);
+			return temp;
 		}
+
+		
 }
 			
 	

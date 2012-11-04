@@ -11,12 +11,16 @@ public class NounPhrase {
 	private Gender gender;
 	private Boolean plural;
 	private int sentenceID;
+	private boolean containsPronoun;
 	private ArrayList<String> posTags;
 	private ArrayList<String> phrase;
-	ArrayList<NamedEntity> namedEntities;
+	private ArrayList<NamedEntity> namedEntities;
+	private String headPhrase;
 	
 	
 	public NounPhrase() {
+		headPhrase = null;
+		containsPronoun = false;
 		phrase = new ArrayList<String>();
 		posTags = new ArrayList<String>();
 		id = null;
@@ -41,8 +45,16 @@ public class NounPhrase {
 		sentenceID = sentID;		
 	}
 	
-	public ArrayList<String> getPhrase(){
-		return phrase;
+	public String getPhrase(){
+		if(phrase.size()>0){
+			String returnPhrase = phrase.get(0);
+			for(int i = 1; i < phrase.size(); i++){
+				returnPhrase += " " + phrase.get(i);
+			}
+			
+			return returnPhrase.trim();
+		}
+		return null;
 	}
 	
 	public void addToPhrase(String phraseTok, String posTag){
@@ -88,6 +100,36 @@ public class NounPhrase {
 	public boolean equals(Object obj) {
 		NounPhrase other = (NounPhrase) obj;
 		return this.phrase.equals(other.phrase) /*&& this.id.equals(other.id)*/;
+	}
+
+	public void addHeadPhrase(String headPhrase) {
+		this.headPhrase = headPhrase.trim();
+		
+	}
+	public String getHeadPhrase(){
+		return headPhrase;
+	}
+	/**
+	 * returns the arrayList of this NounPhrase's pos Tags
+	 * @return
+	 */
+	public ArrayList<String> getPosTags(){
+		return posTags;
+	}
+	
+	public void setPronoun(Boolean isPronoun){
+		containsPronoun = isPronoun;
+	}
+	public void setPlural(Boolean isPlural){
+		plural = isPlural;
+	}
+	public int getHeadPhraseIndex(){
+		if(headPhrase != null)
+			for(int i = 0; i < phrase.size(); i++){
+				if(phrase.get(i).equals(headPhrase))
+					return i;
+		}
+		return -1;
 	}
 	
 }
