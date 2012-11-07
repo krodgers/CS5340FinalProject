@@ -255,6 +255,10 @@ public class PreProcessing {
 			String classification = classifier.classifyWithInlineXML(nounPhrase.getPhrase());
 			setNE(classification, nounPhrase);
 		}
+		
+		private void escapeIllegals(String classification){
+			
+		}
 
 		/**
 		 * This method takes a Named Entity classification(created by FindNER which uses Stanford NER)
@@ -267,10 +271,13 @@ public class PreProcessing {
 			        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			        try{
 			        DocumentBuilder builder = factory.newDocumentBuilder();
+			        classification = classification.replaceAll("&", "");
 			        InputSource is = new InputSource(new StringReader(classification));
 			        Document doc = builder.parse(is);
-			        
+					//classification = classification.replaceAll("<", "&lt");
+					//classification = classification.replaceAll(">", "&gt");
 			        NodeList nodes = doc.getElementsByTagName("ORGANIZATION");
+			        
 			        for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(0).getTextContent();
 			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.ORGANIZATION);
