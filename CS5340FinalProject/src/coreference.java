@@ -5,6 +5,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.stanford.nlp.ie.AbstractSequenceClassifier;
+import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.StringUtils;
 
@@ -25,14 +27,17 @@ public class coreference {
 		 * current label to give
 		 * 
 		 */
+		String curDir = System.getProperty("user.dir");
+		String serializedClassifier = curDir+ "/classifiers/english.all.3class.distsim.crf.ser.gz";
 		ArrayList<String> sentences = new ArrayList<String>();
+		CRFClassifier classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
 		PreProcessing processor = new PreProcessing();
-		ArrayList<NounPhrase> nounPhrasesNotMapRefactorMe = new ArrayList<NounPhrase>();
-		HashMap<String, NounPhrase> nounPhraseList = new HashMap<String,NounPhrase>();
+		ArrayList<NounPhrase> nounPhrasesList = new ArrayList<NounPhrase>();
+		HashMap<String, NounPhrase> nounPhraseMap = new HashMap<String,NounPhrase>();
 		//Read in Arguments
 		if(args.length != 2)
 		{
-			System.out.println("Usage: coreference <listfile> <responsedir>");
+			//System.out.println("Usage: coreference <listfile> <responsedir>");
 			return;
 		}
 		String listFileName = args[0];  // list of files to process; FOR DEBUGGING USE listFile.txt
@@ -88,7 +93,7 @@ public class coreference {
 				//preprocess
 				currChunk = currChunk.substring(0, currChunk.indexOf("<COREF")).trim();
 				//split sentences
-				ArrayList<String> unProcSentences = processor.splitSentences(currChunk);
+				ArrayList<String> unProcSentences = processor.splitSentences(currChunk, curDir);
 				//end preprocess
 				
 				//process coref
@@ -98,13 +103,13 @@ public class coreference {
 
 				ArrayList<Tree> corefNPTree = parserUtil.fullParse(currentCoref);
 				if(corefNPTree.isEmpty()){
-					System.out.println("Failed to parse coref ID=" + idNum + " FileName: " + fileName);
+					//System.out.println("Failed to parse coref ID=" + idNum + " FileName: " + fileName);
 					continue;
 				}
 				Tree corefTree = corefNPTree.get(0);
-				phrase = processor.createNP(corefTree);
+				phrase = processor.createNP(corefTree, classifier);
 				phrase.setId(idNum);
-				System.out.println(phrase.getPhrase());
+				//System.out.println(phrase.getPhrase());
 				
 				//parse
 				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();//this will be populated with np's extracted from unProcSentences
@@ -113,7 +118,7 @@ public class coreference {
 					ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 					//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
 					for(Tree t : npTrees){
-						NounPhrase addCandidate = processor.createNP(t);
+						NounPhrase addCandidate = processor.createNP(t, classifier);
 						if(addCandidate != null)
 							fullNPs.add(addCandidate);
 					}
@@ -128,20 +133,20 @@ public class coreference {
 				
 				//add to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
-					nounPhraseList.put(np.getPhrase(), np);
-					nounPhrasesNotMapRefactorMe.add(np);
+					nounPhraseMap.put(np.getPhrase(), np);
+					nounPhrasesList.add(np);
 				}
 				
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
-				matcher.setList(nounPhrasesNotMapRefactorMe);
+				matcher.setList(nounPhrasesList);
 				matcher.setCoref(phrase);
 				int matchId = -1;
 				matchId = matcher.createScores();
 				if(matchId > -1){
 					matcher.CreateMatch(matchId);
 				}
-				nounPhrasesNotMapRefactorMe.add(phrase);
-				nounPhraseList.put(phrase.getPhrase(), phrase);
+				nounPhrasesList.add(phrase);
+				nounPhraseMap.put(phrase.getPhrase(), phrase);
 				
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 				
@@ -176,8 +181,8 @@ public class coreference {
 			}
 			matcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir);
 			matcher.resetIdCounter();
-			nounPhrasesNotMapRefactorMe.clear();
-			nounPhraseList.clear();
+			nounPhrasesList.clear();
+			nounPhraseMap.clear();
 		
 		}	
 

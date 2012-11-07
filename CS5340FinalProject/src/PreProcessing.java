@@ -100,12 +100,12 @@ public class PreProcessing {
 		 * Splits sentences by writing paragraphs to file then writing to file;
 		 * @param file
 		 */
-		public ArrayList<String> splitSentences(String currentChunk){
+		public ArrayList<String> splitSentences(String currentChunk, String currentDir){
 			SentenceModel model = null;
 			SentenceDetectorME splitter = null;
 			ArrayList<String> returnSentences = new ArrayList<String>();
 			try{
-				modelIn = new FileInputStream("en-sent.bin");
+				modelIn = new FileInputStream(currentDir + "/classifiers/en-sent.bin");
 				model = new SentenceModel(modelIn);
 				splitter = new SentenceDetectorME(model);
 				
@@ -210,7 +210,7 @@ public class PreProcessing {
 			ArrayList<String[]> chunks = new ArrayList<String[]>();
 			
 			try {
-				modelIn = new FileInputStream("en-chunker.bin");
+				modelIn = new FileInputStream("/en-chunker.bin");
 				model = new ChunkerModel(modelIn);
 				chunker = new ChunkerME(model);
 				
@@ -249,8 +249,8 @@ public class PreProcessing {
 			return NPs.toArray(nounPhrases);
 		}
 		
-		static AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions("english.all.3class.distsim.crf.ser.gz");
-		public void FindNer(NounPhrase nounPhrase){
+		
+		public void FindNer(NounPhrase nounPhrase, AbstractSequenceClassifier classifier){
 			String serializedClassifier = "";
 			String classification = classifier.classifyWithInlineXML(nounPhrase.getPhrase());
 			setNE(classification, nounPhrase);
@@ -274,19 +274,19 @@ public class PreProcessing {
 			        for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(0).getTextContent();
 			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.ORGANIZATION);
-			        	System.out.println(bob + " Org");
+			        	//System.out.println(bob + " Org");
 			        } 
 			        nodes = doc.getElementsByTagName("PERSON");
 			        for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(i).getTextContent();
 			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.LOCATION);
-			        	System.out.println(bob + " Pers");
+			        	//System.out.println(bob + " Pers");
 			        }
 			        nodes = doc.getElementsByTagName("LOCATION");
 		        	 for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(0).getTextContent();
 			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.LOCATION);
-			          	System.out.println(bob + " Loc");
+			          	//System.out.println(bob + " Loc");
 		        	 }
 			        
 			        }catch(Exception e){e.printStackTrace();}
@@ -329,7 +329,7 @@ public class PreProcessing {
 		}
 		
 		
-		public NounPhrase createNP(Tree npTree){
+		public NounPhrase createNP(Tree npTree, AbstractSequenceClassifier classifier){
 			ArrayList<NounPhrase> tempNps = new ArrayList<NounPhrase>();
 			//extract pos tags
 			NounPhrase temp = new NounPhrase();
@@ -357,7 +357,7 @@ public class PreProcessing {
 					temp.addHeadPhrase(headPhrase);
 			}
 			//find NER
-			FindNer(temp);
+			FindNer(temp, classifier);
 			//determine number
 			determineNumber(temp);
 			/*remove determiners

@@ -52,9 +52,9 @@ public class StringMatcher {
 			}
 		}
 		if(bestScore > 0){
-			System.out.println(coref.getPhrase() + " ID=" + coref.getId());
+			//System.out.println(coref.getPhrase() + " ID=" + coref.getId());
 			NounPhrase winner = list.get(bestIndex);
-			System.out.println(winner.getPhrase() + (winner.getId() != null ? (" ID=" + winner.getId()) : ""));
+			//System.out.println(winner.getPhrase() + (winner.getId() != null ? (" ID=" + winner.getId()) : ""));
 			return bestIndex;
 		}
 		return -1;
@@ -65,8 +65,7 @@ public class StringMatcher {
 		//check to see if matched item is a previous coref
 		
 		NounPhrase match = list.get(matchId);
-		if(match.getPhrase().contains("Eastern Airlines"))
-			System.out.println("bob");
+		
 		if(list.get(matchId).getId() == null){
 			//not coref
 			//set ID
@@ -111,7 +110,7 @@ public class StringMatcher {
 			e.printStackTrace();
 		}
 		
-		System.out.println("");
+		//System.out.println("");
 		
 		for(int i = 0; i < list.size(); i ++){
 			String outString = "";
@@ -122,12 +121,12 @@ public class StringMatcher {
 					outString += "\" REF=\"" + temp.getRef();
 				outString += "\">" + temp.getPhrase()+"</COREF>";
 			}
-			if(!outString.equals(""))
-				System.out.println(outString);
+			//if(!outString.equals(""))
+				//System.out.println(outString);
 			
 		}
 		
-		System.out.println("");
+		//System.out.println("");
 	}
 
 

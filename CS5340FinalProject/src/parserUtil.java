@@ -8,7 +8,7 @@ import edu.stanford.nlp.trees.Tree;
 
 public class parserUtil {
 
-	static LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");;
+	static LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
 	
 	
 	public parserUtil() {
