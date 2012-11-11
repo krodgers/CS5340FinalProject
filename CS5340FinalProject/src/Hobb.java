@@ -34,7 +34,7 @@ public class Hobb {
 		String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London. The king of London is highly esteemed.";
 		//Do full parse of sentences
 		
-		ArrayList<Tree> NPTrees = ParserUtil.fullParse(sentence);
+		ArrayList<Tree> NPTrees = parserUtil.fullParse(sentence);
 		
 		//Get the NP in order
 		ArrayList<NounPhrase> npList = new ArrayList<NounPhrase>();
