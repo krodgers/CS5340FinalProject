@@ -96,31 +96,44 @@ public class coreference {
 				ArrayList<String> unProcSentences = processor.splitSentences(currChunk, curDir);
 				//end preprocess
 				
-				//process coref
-				NounPhrase phrase;
+				/*
+				 * process coreference into a nounphrase 
+				 */
+				NounPhrase corefNP;//this is the nounphrase object that will contain the coref
 				if(currentCoref.contains(">"))
 					currentCoref = currentCoref.replace(">", "");
-
+				//take the current coref and run a full parse on it
 				ArrayList<Tree> corefNPTree = parserUtil.fullParse(currentCoref);
+				/*
+				 * This needs to be fixed. the following if statement check to see if the parsed
+				 * coreference tree is empty which it should not be!!!
+				 */
 				if(corefNPTree.isEmpty()){
 					//System.out.println("Failed to parse coref ID=" + idNum + " FileName: " + fileName);
 					continue;
 				}
+				//Get the tree containing the noun phrase
 				Tree corefTree = corefNPTree.get(0);
-				phrase = processor.createNP(corefTree, classifier);
-				phrase.setId(idNum);
-				//System.out.println(phrase.getPhrase());
+				//create
+				corefNP = processor.createNP(corefTree, classifier);
+				corefNP.setId(idNum);
 				
 				//parse
-				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();//this will be populated with np's extracted from unProcSentences
+				/*
+				 * full parse chunk before the noun phrase, extract the NPs, populate new NPs' features, Add to nounphrase arraylist/hashmap
+				 */
+				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();//this is a temp list that contains all new noun phrases in the current chunk
 				for(String sent : unProcSentences){
 					//parse the sentence
 					ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 					//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
 					for(Tree t : npTrees){
+						//call the createNP method in PreProcessing.java file which will extract the Noun phrases
+						//from the np tree and populate the features of each extracted nounphrase
 						NounPhrase addCandidate = processor.createNP(t, classifier);
+						//if the createNP returns null then no noun phrase was found in the current tree and should not be added
 						if(addCandidate != null)
-							fullNPs.add(addCandidate);
+							fullNPs.add(addCandidate); 
 					}
 				}
 				//print out block for debugging
@@ -138,15 +151,15 @@ public class coreference {
 				}
 				
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
-				matcher.setList(nounPhrasesList);
-				matcher.setCoref(phrase);
+				//matcher.setList(n);
+				//matcher.setCoref(corefNP);
 				int matchId = -1;
-				matchId = matcher.createScores();
+				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
 				if(matchId > -1){
-					matcher.CreateMatch(matchId);
+					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP);
 				}
-				nounPhrasesList.add(phrase);
-				nounPhraseMap.put(phrase.getPhrase(), phrase);
+				nounPhrasesList.add(corefNP);
+				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
 				
 				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
 				
@@ -179,7 +192,7 @@ public class coreference {
 
 			
 			}
-			matcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir);
+			StringMatcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir, nounPhrasesList);
 			matcher.resetIdCounter();
 			nounPhrasesList.clear();
 			nounPhraseMap.clear();

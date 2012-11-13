@@ -64,13 +64,22 @@ public class parserUtil {
 		return nounPhrases;
 	}
 	
+	/**
+	 * checks if a tag is a nounphrase
+	 * @param tag
+	 * @return true if a nounphrase
+	 */
 	public static boolean tagIsProunoun(String tag){
 		String temp = tag.toUpperCase();
 		if(temp.equals("WP") || temp.equals("WP$") || temp.equals("PRP$") || temp.equals("PRP"))
 			return true;
 		return false;
 	}
-	
+	/**
+	 * checks if a tag indicates plurality
+	 * @param tag
+	 * @return true if the tag is plural, false otherwise
+	 */
 	public static boolean tagIsPluralNoun(String tag){
 		if(tag.equals("NNS") || tag.equals("NNPS")){
 			return true;

@@ -228,6 +228,12 @@ public class PreProcessing {
 			
 		}
 		
+		/**
+		 * 
+		 * @param chunks
+		 * @param tokSent
+		 * @return
+		 */
 		private String[] chunksToNP(ArrayList<String[]> chunks, ArrayList<String[]> tokSent){
 			ArrayList<String> NPs = new ArrayList<String>(chunks.size()*2);
 			
@@ -249,7 +255,11 @@ public class PreProcessing {
 			return NPs.toArray(nounPhrases);
 		}
 		
-		
+		/**
+		 * this method runs the stanford ner classifier
+		 * @param nounPhrase the phrase to classify
+		 * @param classifier the classifier to use
+		 */
 		public void FindNer(NounPhrase nounPhrase, AbstractSequenceClassifier classifier){
 			String serializedClassifier = "";
 			String classification = classifier.classifyWithInlineXML(nounPhrase.getPhrase());
@@ -299,6 +309,14 @@ public class PreProcessing {
 			        }catch(Exception e){e.printStackTrace();}
 		}
 		
+		/**
+		 * Checks to see if the nounphrase contains pronouns.
+		 * Sets the nounPhrase's pronoun boolean to true if
+		 * it's phrase contains a pronoun.
+		 * See parserUtil.tagIsPronoun for tags that are considered
+		 * prounouns.
+		 * @param phrase
+		 */
 		private void setPronouns(NounPhrase phrase){
 			for(String tag: phrase.getPosTags()){
 				if(parserUtil.tagIsProunoun(tag)){
@@ -308,6 +326,11 @@ public class PreProcessing {
 			}
 		}
 		
+		/**
+		 * This will determine if a nounphrase is plural or not.
+		 * See parserUtil for tags that are considered plural
+		 * @param phrase the phrase to check
+		 */
 		private void determineNumber(NounPhrase phrase) {
 			//look at the pos tag of the head noun first
 			if(phrase.getHeadPhrase() != null){
