@@ -62,13 +62,13 @@ public class coreference {
 				corefSplit = document.split("</COREF>");
 
 			} catch (Exception e) {
-				System.err.println("Filed reading input file");
+				System.err.println("Filed reading input file: " + fileName);
 				e.printStackTrace();
 				return;
 			}
 
 
-
+			System.out.println("Processing file: " + fileName);
 			/**
 			 * remove <TXT> </TXT> tags
 			 */
@@ -99,25 +99,10 @@ public class coreference {
 				/*
 				 * process coreference into a nounphrase 
 				 */
-				NounPhrase corefNP;//this is the nounphrase object that will contain the coref
-				if(currentCoref.contains(">"))
-					currentCoref = currentCoref.replace(">", "");
-				//take the current coref and run a full parse on it
-				ArrayList<Tree> corefNPTree = parserUtil.fullParse(currentCoref);
-				/*
-				 * This needs to be fixed. the following if statement check to see if the parsed
-				 * coreference tree is empty which it should not be!!!
-				 */
-				if(corefNPTree.isEmpty()){
-					//System.out.println("Failed to parse coref ID=" + idNum + " FileName: " + fileName);
+				NounPhrase corefNP;
+				if((corefNP = NPcreateCorefNP(currentCoref, idNum, processor, classifier)) == null){
 					continue;
 				}
-				//Get the tree containing the noun phrase
-				Tree corefTree = corefNPTree.get(0);
-				//create
-				corefNP = processor.createNP(corefTree, classifier);
-				corefNP.setId(idNum);
-				
 				//parse
 				/*
 				 * full parse chunk before the noun phrase, extract the NPs, populate new NPs' features, Add to nounphrase arraylist/hashmap
@@ -125,26 +110,13 @@ public class coreference {
 				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();//this is a temp list that contains all new noun phrases in the current chunk
 				for(String sent : unProcSentences){
 					//parse the sentence
-					ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
-					//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
-					for(Tree t : npTrees){
-						//call the createNP method in PreProcessing.java file which will extract the Noun phrases
-						//from the np tree and populate the features of each extracted nounphrase
-						NounPhrase addCandidate = processor.createNP(t, classifier);
-						//if the createNP returns null then no noun phrase was found in the current tree and should not be added
-						if(addCandidate != null)
-							fullNPs.add(addCandidate); 
+					NounPhrase nounPhrase;
+					if((nounPhrase = extractNounPhrase(sent, classifier, processor)) != null){
+						//if the extractNounphrase returns null then no noun phrase was found in the current tree and should not be added 
+						fullNPs.add(nounPhrase);
 					}
-				}
-				//print out block for debugging
-//				System.out.println("\n" +  "fullParse Noun Phrases: ");
-//				for(NounPhrase outPhrase: fullNPs){
-//					String parsedPhrase = outPhrase.getPhrase();
-//					System.out.println(parsedPhrase);
-//				}
-				//end print out block for debugging
-				
-				//add to hashmap of nounphrases
+				}				
+				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
 					nounPhraseMap.put(np.getPhrase(), np);
 					nounPhrasesList.add(np);
@@ -201,6 +173,41 @@ public class coreference {
 
 	}
 	
+	private static NounPhrase extractNounPhrase(String sent,
+			CRFClassifier classifier, PreProcessing processor) {
+		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
+		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
+		for(Tree t : npTrees){
+			//call the createNP method in PreProcessing.java file which will extract the Noun phrases
+			//from the np tree and populate the features of each extracted nounphrase
+			NounPhrase addCandidate = processor.createNP(t, classifier);
+			return addCandidate;
+		}
+		return null;
+	}
+
+	private static NounPhrase NPcreateCorefNP(String currentCoref, String idNum, PreProcessing processor, CRFClassifier classifier) {
+		NounPhrase corefNP;//this is the nounphrase object that will contain the coref
+		if(currentCoref.contains(">"))
+			currentCoref = currentCoref.replace(">", "");
+		//take the current coref and run a full parse on it
+		ArrayList<Tree> corefNPTree = parserUtil.fullParse(currentCoref);
+		/*
+		 * This needs to be fixed. the following if statement check to see if the parsed
+		 * coreference tree is empty which it should not be!!!
+		 */
+		if(corefNPTree.isEmpty()){
+			//System.out.println("Failed to parse coref ID=" + idNum + " FileName: " + fileName);
+			return null;
+		}
+		//Get the tree containing the noun phrase
+		Tree corefTree = corefNPTree.get(0);
+		//create
+		corefNP = processor.createNP(corefTree, classifier);
+		corefNP.setId(idNum);
+		return corefNP;
+	}
+
 	/**
 	 * Returns String from array
 	 */

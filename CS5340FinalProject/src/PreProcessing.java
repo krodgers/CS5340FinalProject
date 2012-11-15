@@ -1,9 +1,6 @@
-import java.awt.List;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +24,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
-import edu.stanford.nlp.ie.crf.CRFClassifier;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.Trees;
@@ -177,7 +170,7 @@ public class PreProcessing {
 		}
 		
 		/**
-		 * combines the tokenized sentences with the tags in the form "word/tag".
+		 * NOT USED --combines the tokenized sentences with the tags in the form "word/tag".
 		 * @return an array list of fused tokens
 		 */
 		public ArrayList<String[]> fuseTagsForFunAndProfit(){
@@ -203,7 +196,12 @@ public class PreProcessing {
 			return fused;
 		}
 		
-		
+		/**
+		 * NOT USED--uses the open nlp chunker
+		 * @param sentArr
+		 * @param posArr
+		 * @return
+		 */
 		public String[] partialParse(ArrayList<String[]> sentArr, ArrayList<String[]> posArr){
 			ChunkerME chunker;
 			ChunkerModel model;
@@ -229,7 +227,8 @@ public class PreProcessing {
 		}
 		
 		/**
-		 * 
+		 * NOT USED--takes input from the opennlp chunker and turns it into a noun
+		 * phrase 
 		 * @param chunks
 		 * @param tokSent
 		 * @return
@@ -264,10 +263,6 @@ public class PreProcessing {
 			String serializedClassifier = "";
 			String classification = classifier.classifyWithInlineXML(nounPhrase.getPhrase());
 			setNE(classification, nounPhrase);
-		}
-		
-		private void escapeIllegals(String classification){
-			
 		}
 
 		/**
@@ -358,27 +353,33 @@ public class PreProcessing {
 			return this.sentences;
 		}
 		
-		
+		/**
+		 * This method will create a nounphrase from a npTree. Then, this
+		 * method will call all methods requisite to populating the new noun
+		 * phrase's properties.
+		 * @param npTree
+		 * @param classifier
+		 * @return
+		 */
 		public NounPhrase createNP(Tree npTree, AbstractSequenceClassifier classifier){
-			ArrayList<NounPhrase> tempNps = new ArrayList<NounPhrase>();
 			//extract pos tags
-			NounPhrase temp = new NounPhrase();
+			NounPhrase temp = new NounPhrase();//a new nounphrase cadidate
 			for(Tree t : npTree){
-				if(t.isPreTerminal()){
-					for(Tree leaf :t.getLeaves()){
+				if(t.isPreTerminal()){//checks if the noun phrase tree is the parent of some leaves
+					for(Tree leaf :t.getLeaves()){//get all the leaves of the parent node
 						if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
 							temp.addToPhrase(leaf.value(), t.value());
 					}
 				}
 			}	
-			if(temp.getPhrase() == null)
-			{
-				return null;
+			if(temp.getPhrase() == null)//if the noun phrase was not extracted properly then quietly escape
+			{								//this happens when a noun phrase like "here" is extracted with
+				return null;				//a non nounphrase label
 			}
 			//find head nouns
-			CollinsHeadFinder headFinder = new CollinsHeadFinder();
-			Tree head = headFinder.determineHead(npTree);
-			String headPhrase = "";
+			CollinsHeadFinder headFinder = new CollinsHeadFinder();//Stanford nlp's head finder
+			Tree head = headFinder.determineHead(npTree);//exctracts the head from the npTree argument
+			String headPhrase = "";//need to reconstruct the head before putting it in the NP head variable
 			//reconstruct the head phrase and add it to the temp noun phrase
 			for(Tree t: head.getChildrenAsList()){
 					for(Tree leaf : Trees.leaves(t)){
@@ -392,13 +393,9 @@ public class PreProcessing {
 			determineNumber(temp);
 			/*remove determiners
 			find gender
-			mark if contains pronoun*/
+			all need to be done*/
+			//check if the nounphrase contains a pronoun
 			setPronouns(temp);
 			return temp;
-		}
-
-		
+		}		
 }
-			
-	
-
