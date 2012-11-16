@@ -9,6 +9,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
@@ -23,28 +24,40 @@ import opennlp.tools.util.Span;
 public class Hobb {
 
 	/**
-	 * Runs Hobb's algorithm 
-	 * @param NP	The noun phrase containing the pronoun
-	 * @param context	The sentence containing NP and previous sentences
-	 * @return  true if a coreferent NP is found
+	 * Runs Hobb's
+	 * @param corefNP     a NounPhrase of the current coref phrase
+	 * @param context		the sentence up to and including the coref phrase
+	 * @param NPList		the map of the featurized nounphrases
+	 * @return
 	 */
-	public boolean runHobbs(String NP, String context)
+	public boolean runHobbs(NounPhrase corefNP, String context, HashMap<String, NounPhrase> NPList)
 	{
 		//Split sentences
-		PreProcessing proc = new PreProcessing();
-		ArrayList<String> splitSents = proc.splitSentences(context, System.getProperty("user.dir"));
-		
 		//String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London. The king of London is highly esteemed.";
+		PreProcessing processor = new PreProcessing();
+		ArrayList<String> sents = processor.splitSentences(context);
 		//Do full parse of sentences
 		//Get the NP in order
-		ArrayList<NounPhrase> npList = new ArrayList<NounPhrase>();
-		for(int x = 0; x < splitSents.size(); x++)
+		ArrayList<String> npList = new ArrayList<String>();
+		ArrayList<Tree> parsedNP;
+		for(int x = sents.size() - 1; x >= 0; x--)
 		{
-			ArrayList<Tree> NPTrees = parserUtil.fullParse(splitSents.get(x));
+			parsedNP = parserUtil.fullParse(sents.get(x));
+			for(Tree t : parsedNP)
+			{
+				npList.add(t.getLeaves().toString());
+			}
+			int stIdx = npList.indexOf(corefNP.getPhrase());
+			for(int i = stIdx - 1; i >= 0; i--)
+			{
+				scoreNP(corefNP.getPhrase(), npList(stIdx));
+				
+			}
 			
 		}
 		
 		
+	
 		/**
 		 * noun groups are searched in the following order: 
 			In current sentence, R->L, starting from L of PRO
@@ -85,6 +98,7 @@ public class Hobb {
 		return result;
 	}
 
-
+	// 
 
 }
+
