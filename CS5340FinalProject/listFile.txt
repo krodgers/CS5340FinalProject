@@ -1,3 +1,4 @@
+RawInput/1.crf
 RawInput/10.crf
 RawInput/11.crf
 RawInput/12.crf
@@ -8,7 +9,6 @@ RawInput/16.crf
 RawInput/17.crf
 RawInput/18.crf
 RawInput/19.crf
-RawInput/1.crf
 RawInput/20.crf
 RawInput/21.crf
 RawInput/22.crf

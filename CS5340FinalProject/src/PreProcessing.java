@@ -1,9 +1,6 @@
-import java.awt.List;
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,10 +24,6 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
-import edu.stanford.nlp.ie.crf.CRFClassifier;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.Trees;
@@ -100,12 +93,12 @@ public class PreProcessing {
 		 * Splits sentences by writing paragraphs to file then writing to file;
 		 * @param file
 		 */
-		public ArrayList<String> splitSentences(String currentChunk){
+		public ArrayList<String> splitSentences(String currentChunk, String currentDir){
 			SentenceModel model = null;
 			SentenceDetectorME splitter = null;
 			ArrayList<String> returnSentences = new ArrayList<String>();
 			try{
-				modelIn = new FileInputStream("en-sent.bin");
+				modelIn = new FileInputStream(currentDir + "/classifiers/en-sent.bin");
 				model = new SentenceModel(modelIn);
 				splitter = new SentenceDetectorME(model);
 				
@@ -177,7 +170,7 @@ public class PreProcessing {
 		}
 		
 		/**
-		 * combines the tokenized sentences with the tags in the form "word/tag".
+		 * NOT USED --combines the tokenized sentences with the tags in the form "word/tag".
 		 * @return an array list of fused tokens
 		 */
 		public ArrayList<String[]> fuseTagsForFunAndProfit(){
@@ -203,14 +196,19 @@ public class PreProcessing {
 			return fused;
 		}
 		
-		
+		/**
+		 * NOT USED--uses the open nlp chunker
+		 * @param sentArr
+		 * @param posArr
+		 * @return
+		 */
 		public String[] partialParse(ArrayList<String[]> sentArr, ArrayList<String[]> posArr){
 			ChunkerME chunker;
 			ChunkerModel model;
 			ArrayList<String[]> chunks = new ArrayList<String[]>();
 			
 			try {
-				modelIn = new FileInputStream("en-chunker.bin");
+				modelIn = new FileInputStream("/en-chunker.bin");
 				model = new ChunkerModel(modelIn);
 				chunker = new ChunkerME(model);
 				
@@ -228,6 +226,13 @@ public class PreProcessing {
 			
 		}
 		
+		/**
+		 * NOT USED--takes input from the opennlp chunker and turns it into a noun
+		 * phrase 
+		 * @param chunks
+		 * @param tokSent
+		 * @return
+		 */
 		private String[] chunksToNP(ArrayList<String[]> chunks, ArrayList<String[]> tokSent){
 			ArrayList<String> NPs = new ArrayList<String>(chunks.size()*2);
 			
@@ -249,8 +254,12 @@ public class PreProcessing {
 			return NPs.toArray(nounPhrases);
 		}
 		
-		static AbstractSequenceClassifier<CoreLabel> classifier = CRFClassifier.getClassifierNoExceptions("english.all.3class.distsim.crf.ser.gz");
-		public void FindNer(NounPhrase nounPhrase){
+		/**
+		 * this method runs the stanford ner classifier
+		 * @param nounPhrase the phrase to classify
+		 * @param classifier the classifier to use
+		 */
+		public void FindNer(NounPhrase nounPhrase, AbstractSequenceClassifier classifier){
 			String serializedClassifier = "";
 			String classification = classifier.classifyWithInlineXML(nounPhrase.getPhrase());
 			setNE(classification, nounPhrase);
@@ -267,31 +276,42 @@ public class PreProcessing {
 			        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 			        try{
 			        DocumentBuilder builder = factory.newDocumentBuilder();
+			        classification = classification.replaceAll("&", "");
 			        InputSource is = new InputSource(new StringReader(classification));
 			        Document doc = builder.parse(is);
-			        
+					//classification = classification.replaceAll("<", "&lt");
+					//classification = classification.replaceAll(">", "&gt");
 			        NodeList nodes = doc.getElementsByTagName("ORGANIZATION");
+			        
 			        for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(0).getTextContent();
 			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.ORGANIZATION);
-			        	System.out.println(bob + " Org");
+			        	//System.out.println(bob + " Org");
 			        } 
 			        nodes = doc.getElementsByTagName("PERSON");
 			        for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(i).getTextContent();
 			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.LOCATION);
-			        	System.out.println(bob + " Pers");
+			        	//System.out.println(bob + " Pers");
 			        }
 			        nodes = doc.getElementsByTagName("LOCATION");
 		        	 for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(0).getTextContent();
 			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.LOCATION);
-			          	System.out.println(bob + " Loc");
+			          	//System.out.println(bob + " Loc");
 		        	 }
 			        
 			        }catch(Exception e){e.printStackTrace();}
 		}
 		
+		/**
+		 * Checks to see if the nounphrase contains pronouns.
+		 * Sets the nounPhrase's pronoun boolean to true if
+		 * it's phrase contains a pronoun.
+		 * See parserUtil.tagIsPronoun for tags that are considered
+		 * prounouns.
+		 * @param phrase
+		 */
 		private void setPronouns(NounPhrase phrase){
 			for(String tag: phrase.getPosTags()){
 				if(parserUtil.tagIsProunoun(tag)){
@@ -301,6 +321,11 @@ public class PreProcessing {
 			}
 		}
 		
+		/**
+		 * This will determine if a nounphrase is plural or not.
+		 * See parserUtil for tags that are considered plural
+		 * @param phrase the phrase to check
+		 */
 		private void determineNumber(NounPhrase phrase) {
 			//look at the pos tag of the head noun first
 			if(phrase.getHeadPhrase() != null){
@@ -328,27 +353,33 @@ public class PreProcessing {
 			return this.sentences;
 		}
 		
-		
-		public NounPhrase createNP(Tree npTree){
-			ArrayList<NounPhrase> tempNps = new ArrayList<NounPhrase>();
+		/**
+		 * This method will create a nounphrase from a npTree. Then, this
+		 * method will call all methods requisite to populating the new noun
+		 * phrase's properties.
+		 * @param npTree
+		 * @param classifier
+		 * @return
+		 */
+		public NounPhrase createNP(Tree npTree, AbstractSequenceClassifier classifier){
 			//extract pos tags
-			NounPhrase temp = new NounPhrase();
+			NounPhrase temp = new NounPhrase();//a new nounphrase cadidate
 			for(Tree t : npTree){
-				if(t.isPreTerminal()){
-					for(Tree leaf :t.getLeaves()){
+				if(t.isPreTerminal()){//checks if the noun phrase tree is the parent of some leaves
+					for(Tree leaf :t.getLeaves()){//get all the leaves of the parent node
 						if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
 							temp.addToPhrase(leaf.value(), t.value());
 					}
 				}
 			}	
-			if(temp.getPhrase() == null)
-			{
-				return null;
+			if(temp.getPhrase() == null)//if the noun phrase was not extracted properly then quietly escape
+			{								//this happens when a noun phrase like "here" is extracted with
+				return null;				//a non nounphrase label
 			}
 			//find head nouns
-			CollinsHeadFinder headFinder = new CollinsHeadFinder();
-			Tree head = headFinder.determineHead(npTree);
-			String headPhrase = "";
+			CollinsHeadFinder headFinder = new CollinsHeadFinder();//Stanford nlp's head finder
+			Tree head = headFinder.determineHead(npTree);//exctracts the head from the npTree argument
+			String headPhrase = "";//need to reconstruct the head before putting it in the NP head variable
 			//reconstruct the head phrase and add it to the temp noun phrase
 			for(Tree t: head.getChildrenAsList()){
 					for(Tree leaf : Trees.leaves(t)){
@@ -357,18 +388,14 @@ public class PreProcessing {
 					temp.addHeadPhrase(headPhrase);
 			}
 			//find NER
-			FindNer(temp);
+			FindNer(temp, classifier);
 			//determine number
 			determineNumber(temp);
 			/*remove determiners
 			find gender
-			mark if contains pronoun*/
+			all need to be done*/
+			//check if the nounphrase contains a pronoun
 			setPronouns(temp);
 			return temp;
-		}
-
-		
+		}		
 }
-			
-	
-
