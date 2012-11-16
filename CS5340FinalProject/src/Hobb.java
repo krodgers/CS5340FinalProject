@@ -31,13 +31,20 @@ public class Hobb {
 	public boolean runHobbs(String NP, String context)
 	{
 		//Split sentences
-		String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London. The king of London is highly esteemed.";
+		PreProcessing proc = new PreProcessing();
+		ArrayList<String> splitSents = proc.splitSentences(context, System.getProperty("user.dir"));
+		
+		//String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London. The king of London is highly esteemed.";
 		//Do full parse of sentences
-		
-		ArrayList<Tree> NPTrees = parserUtil.fullParse(sentence);
-		
 		//Get the NP in order
 		ArrayList<NounPhrase> npList = new ArrayList<NounPhrase>();
+		for(int x = 0; x < splitSents.size(); x++)
+		{
+			ArrayList<Tree> NPTrees = parserUtil.fullParse(splitSents.get(x));
+			
+		}
+		
+		
 		/**
 		 * noun groups are searched in the following order: 
 			In current sentence, R->L, starting from L of PRO
@@ -78,6 +85,6 @@ public class Hobb {
 		return result;
 	}
 
-	// 
+
 
 }

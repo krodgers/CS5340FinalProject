@@ -77,6 +77,7 @@ public class coreference {
 			
 
 			//Iterate over the splitArray:
+
 			/**
 			 * This part is experimental.  
 			 */
@@ -175,9 +176,6 @@ public class coreference {
 				 */
 				//Feature Scoring
 				//Matching unmatched corefs to previous NP based on how closely features match (gender,number,person,semantics)
-
-
-			
 			}
 			matcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir);
 			matcher.resetIdCounter();
