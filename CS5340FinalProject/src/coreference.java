@@ -5,14 +5,13 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.StringUtils;
 
 
 public class coreference {
-
+	private static Integer idCounter = 0;
 	/**
 	 * @param args
 	 */
@@ -89,7 +88,7 @@ public class coreference {
 					continue;
 				int startIdx = currChunk.indexOf(">");
 				//preserve coref Id
-				int idIndex = currChunk.indexOf("ID=\"")+4;
+				int idIndex= currChunk.indexOf("ID=\"")+4;
 				String idNum = currChunk.substring(idIndex, currChunk.indexOf('"', idIndex));
 				String currentCoref = currChunk.substring(startIdx);
 				//preprocess
@@ -132,7 +131,8 @@ public class coreference {
 				int matchId = -1;
 				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
 				if(matchId > -1){
-					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP);
+					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
+					idCounter++;
 				}
 				nounPhrasesList.add(corefNP);
 				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
@@ -166,7 +166,7 @@ public class coreference {
 				//Matching unmatched corefs to previous NP based on how closely features match (gender,number,person,semantics)
 			}
 			StringMatcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir, nounPhrasesList);
-			matcher.resetIdCounter();
+			idCounter = 1;
 			nounPhrasesList.clear();
 			nounPhraseMap.clear();
 		

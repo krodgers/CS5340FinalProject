@@ -8,7 +8,7 @@ import java.util.ArrayList;
  *
  */
 public class StringMatcher {
-	private static int idIndex = 0;
+	
 	
 	/**
 	 * This method will compare a coreference against a candidate NounPhrase. Specifically,
@@ -133,7 +133,7 @@ public class StringMatcher {
 	 * @param list
 	 * @param coref
 	 */
-	public static void CreateMatch(int matchId, ArrayList<NounPhrase> list, NounPhrase coref) {
+	public static void CreateMatch(int matchId, ArrayList<NounPhrase> list, NounPhrase coref, Integer idCounter) {
 		//check to see if matched item is a previous coref
 		
 		NounPhrase match = list.get(matchId);
@@ -141,7 +141,7 @@ public class StringMatcher {
 		if(list.get(matchId).getId() == null){
 			//not coref
 			//set ID
-			String ref = "X" + idIndex++;
+			String ref = "X" + idCounter;
 			match.setId(ref);
 			//set coref ref tag to the match's id
 			coref.setRef(ref);
@@ -208,8 +208,4 @@ public class StringMatcher {
 		//System.out.println("");
 	}
 
-	public void resetIdCounter() {
-		idIndex =1;
-		
-	}
 }
