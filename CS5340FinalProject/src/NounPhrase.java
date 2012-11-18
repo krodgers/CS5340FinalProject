@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public class NounPhrase {
 	
-	public enum Classification { NONE, PERSON, ORGANIZATION, LOCATION };
+	public enum Classification { NONE, PERSON, ORGANIZATION, LOCATION, MISC, PERCENT, MONEY, DATE, TIME };
 	public enum Gender {NONE, MALE, FEMALE};
 	private String id;  // from <Coref id = ""
 	//private String phrase; // <Coref > phrase </Coref>

@@ -32,9 +32,17 @@ public class StringMatcher {
 						}
 					}
 				}
+			for(NounPhrase.NamedEntity ce: candNEList){
+				for(NounPhrase.NamedEntity cre: corefNEList){
+					//for each named entity in the coref and candidate's list. check to see if thier phrases match.
+					if(ce.phrase.contains(cre.phrase))
+								return 1;
+				}
+			}
 		}
 		return 0;
 	}
+		
 	
 	/**
 	 * This method will take a candidate Noun phrase and compare its head phrase with the coreference's
@@ -48,8 +56,8 @@ public class StringMatcher {
 		String corefHead = coref.getHeadPhrase();
 		if(candHead.equals(corefHead))
 			return 2;
-		/*else if(parserUtil.computeLevenshteinDistance(candHead, corefHead) < 10)
-			return 2;*/
+		if(candidate.getHeadPhrase().contains(coref.getHeadPhrase()))
+			return 1;
 		return 0;
 	}
 	
@@ -57,9 +65,10 @@ public class StringMatcher {
 		String candPhrase = candidate.getPhrase();
 		String corefPhrase = candidate.getPhrase();
 		if(candPhrase.contains(corefPhrase))
-			/*if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) <=11){
+			if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) < 4){
 				return 2;
-			}*/
+			}
+			else
 				return 1;
 		else
 			return 0;
@@ -68,14 +77,14 @@ public class StringMatcher {
 	public static int distance(NounPhrase candidate, NounPhrase coref){
 		String candPhrase = candidate.getPhrase();
 		String corefPhrase = candidate.getPhrase();
-		if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) <= 15){
+		if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) <= 8){
 			return 2;
 		}
 		else
 			return 0;
 	}
 	public static int pluralityMatch(NounPhrase candidate, NounPhrase coref){
-		if(candidate.isPlural() && coref.isPlural())
+		if((!candidate.isPlural() && !coref.isPlural()) || (candidate.isPlural() && coref.isPlural()))
 			return 1;
 		else
 			return 0;
