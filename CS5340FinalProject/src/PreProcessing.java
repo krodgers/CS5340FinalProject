@@ -26,7 +26,9 @@ import org.xml.sax.InputSource;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.trees.TreeTransformer;
 import edu.stanford.nlp.trees.Trees;
+import edu.stanford.nlp.util.Filter;
 
 
 
@@ -291,13 +293,43 @@ public class PreProcessing {
 			        nodes = doc.getElementsByTagName("PERSON");
 			        for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(i).getTextContent();
-			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.LOCATION);
+			        	np.addNamedEntity(nodes.item(i).getTextContent(), NounPhrase.Classification.PERSON);
 			        	//System.out.println(bob + " Pers");
 			        }
 			        nodes = doc.getElementsByTagName("LOCATION");
 		        	 for(int i = 0; i < nodes.getLength(); i++){
 			        	String bob = nodes.item(0).getTextContent();
 			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.LOCATION);
+			          	//System.out.println(bob + " Loc");
+		        	 }
+		        	 nodes = doc.getElementsByTagName("MISC");
+		        	 for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.MISC);
+			          	//System.out.println(bob + " Loc");
+		        	 }
+		        	 nodes = doc.getElementsByTagName("DATE");
+		        	 for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.DATE);
+			          	//System.out.println(bob + " Loc");
+		        	 }
+		        	 nodes = doc.getElementsByTagName("MONEY");
+		        	 for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.MONEY);
+			          	//System.out.println(bob + " Loc");
+		        	 }
+		        	 nodes = doc.getElementsByTagName("PERCENT");
+		        	 for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.PERCENT);
+			          	//System.out.println(bob + " Loc");
+		        	 }
+		        	 nodes = doc.getElementsByTagName("TIME");
+		        	 for(int i = 0; i < nodes.getLength(); i++){
+			        	String bob = nodes.item(0).getTextContent();
+			        	np.addNamedEntity(nodes.item(0).getTextContent(), NounPhrase.Classification.TIME);
 			          	//System.out.println(bob + " Loc");
 		        	 }
 			        
@@ -398,4 +430,23 @@ public class PreProcessing {
 			setPronouns(temp);
 			return temp;
 		}		
+		
+		public static ArrayList<Tree> splitNP(Tree npTree){
+			//ArrayList<Tree> temp = new ArrayList<Tree>();
+			ArrayList<Tree> returnTrees = new ArrayList<Tree>();
+			
+			for(Tree t: npTree){
+				if(t.value().equals("S")){
+					for(Tree s: t)
+						if(s.isPrePreTerminal() && (s.value().equals("NP")))
+							returnTrees.add(s);
+				}
+				else 
+					if((t.isPrePreTerminal()) && (t.value().equals("NP") || t.value().equals("PP")))
+						if(!returnTrees.contains(t))
+							returnTrees.add(t);
+			}
+			return returnTrees;
+		
+		}
 }

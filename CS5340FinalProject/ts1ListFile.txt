@@ -1,4 +1,12 @@
 ts1input/1.crf
+ts1input/2.crf
+ts1input/3.crf
+ts1input/4.crf
+ts1input/5.crf
+ts1input/6.crf
+ts1input/7.crf
+ts1input/8.crf
+ts1input/9.crf
 ts1input/10.crf
 ts1input/11.crf
 ts1input/12.crf
@@ -12,11 +20,3 @@ ts1input/19.crf
 ts1input/20.crf
 ts1input/21.crf
 ts1input/22.crf
-ts1input/2.crf
-ts1input/3.crf
-ts1input/4.crf
-ts1input/5.crf
-ts1input/6.crf
-ts1input/7.crf
-ts1input/8.crf
-ts1input/9.crf

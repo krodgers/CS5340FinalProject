@@ -15,11 +15,11 @@ public class parserUtil {
 		
 	}
 
-	private int minimum(int a, int b, int c) {
+	private static int minimum(int a, int b, int c) {
 		return Math.min(Math.min(a, b), c);
 	}
 
-	public int computeLevenshteinDistance(CharSequence str1, CharSequence str2) {
+	public static int computeLevenshteinDistance(CharSequence str1, CharSequence str2) {
 		int[][] distance = new int[str1.length() + 1][str2.length() + 1];
 
 		for (int i = 0; i <= str1.length(); i++)

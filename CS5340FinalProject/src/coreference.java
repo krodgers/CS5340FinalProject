@@ -28,7 +28,8 @@ public class coreference {
 		 * 
 		 */
 		String curDir = System.getProperty("user.dir");
-		String serializedClassifier = curDir+ "/classifiers/english.all.3class.distsim.crf.ser.gz";
+		//String serializedClassifier = curDir+ "/classifiers/english.all.3class.distsim.crf.ser.gz";
+		String serializedClassifier = curDir+ "/classifiers/english.conll.4class.distsim.crf.ser.gz";
 		ArrayList<String> sentences = new ArrayList<String>();
 		CRFClassifier classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
 		PreProcessing processor = new PreProcessing();
@@ -112,10 +113,12 @@ public class coreference {
 				for(String sent : unProcSentences){
 					//parse the sentence
 					NounPhrase nounPhrase;
+					
 					if((nounPhrase = extractNounPhrase(sent, classifier, processor)) != null){
 						//if the extractNounphrase returns null then no noun phrase was found in the current tree and should not be added 
 						fullNPs.add(nounPhrase);
 					}
+					/*fullNPs.addAll(extractSplitNounPhrases(sent, classifier, processor));*/
 				}				
 				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
@@ -173,6 +176,7 @@ public class coreference {
 	
 	private static NounPhrase extractNounPhrase(String sent,
 			CRFClassifier classifier, PreProcessing processor) {
+		
 		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
 		for(Tree t : npTrees){
@@ -182,6 +186,24 @@ public class coreference {
 			return addCandidate;
 		}
 		return null;
+	}
+	
+	private static ArrayList<NounPhrase> extractSplitNounPhrases(String sent,
+			CRFClassifier classifier, PreProcessing processor) {
+		ArrayList<NounPhrase> returnCandidates = new ArrayList<NounPhrase>();
+		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
+		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
+		for(Tree t : npTrees){
+				for(Tree split : processor.splitNP(t)){
+					//call the createNP method in PreProcessing.java file which will extract the Noun phrases
+					//from the np tree and populate the features of each extracted nounphrase
+					NounPhrase addCandidate = processor.createNP(split, classifier);
+					if(addCandidate != null){
+						returnCandidates.add(addCandidate);
+					}
+				}
+		}
+		return returnCandidates;
 	}
 
 	private static NounPhrase NPcreateCorefNP(String currentCoref, String idNum, PreProcessing processor, CRFClassifier classifier) {

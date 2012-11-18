@@ -28,13 +28,21 @@ public class StringMatcher {
 					for(NounPhrase.NamedEntity cre: corefNEList){
 						//for each named entity in the coref and candidate's list. check to see if thier phrases match.
 						if(ce.phrase.equals(cre.phrase) && ce.classification == cre.classification){
-									return 1;
+									return 2;
 						}
 					}
 				}
+			for(NounPhrase.NamedEntity ce: candNEList){
+				for(NounPhrase.NamedEntity cre: corefNEList){
+					//for each named entity in the coref and candidate's list. check to see if thier phrases match.
+					if(ce.phrase.contains(cre.phrase))
+								return 1;
+				}
+			}
 		}
 		return 0;
 	}
+		
 	
 	/**
 	 * This method will take a candidate Noun phrase and compare its head phrase with the coreference's
@@ -47,8 +55,39 @@ public class StringMatcher {
 		String candHead = candidate.getHeadPhrase();
 		String corefHead = coref.getHeadPhrase();
 		if(candHead.equals(corefHead))
+			return 2;
+		if(candidate.getHeadPhrase().contains(coref.getHeadPhrase()))
 			return 1;
 		return 0;
+	}
+	
+	public static int containsStringMatch(NounPhrase candidate, NounPhrase coref){
+		String candPhrase = candidate.getPhrase();
+		String corefPhrase = candidate.getPhrase();
+		if(candPhrase.contains(corefPhrase))
+			if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) < 4){
+				return 2;
+			}
+			else
+				return 1;
+		else
+			return 0;
+	}
+	
+	public static int distance(NounPhrase candidate, NounPhrase coref){
+		String candPhrase = candidate.getPhrase();
+		String corefPhrase = candidate.getPhrase();
+		if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) <= 8){
+			return 2;
+		}
+		else
+			return 0;
+	}
+	public static int pluralityMatch(NounPhrase candidate, NounPhrase coref){
+		if((!candidate.isPlural() && !coref.isPlural()) || (candidate.isPlural() && coref.isPlural()))
+			return 1;
+		else
+			return 0;
 	}
 	/**
 	 * This method is a sort of driver for the string matching. This method takes the current
@@ -62,11 +101,15 @@ public class StringMatcher {
 	public static int createScores(ArrayList<NounPhrase> list, NounPhrase coref){
 		int bestIndex = -1;
 		int bestScore = 0;
+		//Start from the end of the list because that will contain the noun phrases that are closest to the coref
 		for(int i = list.size()-1; i > -1; i--){
 			int score = 0;
 			NounPhrase candidate = list.get(i);
 			score = fullStringMatchHeads(candidate, coref);
 			score += matchNE(candidate, coref);
+			score += containsStringMatch(candidate, coref);
+			score += pluralityMatch(candidate, coref);
+			//score += distance(candidate, coref);
 			if(score > bestScore){
 				bestIndex = i;
 				bestScore = score;
