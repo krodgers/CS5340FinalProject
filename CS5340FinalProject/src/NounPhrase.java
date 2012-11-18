@@ -143,5 +143,8 @@ public class NounPhrase {
 	public void setRef(String refId){
 		ref = refId;
 	}
+	public boolean isPlural(){
+		return plural != null ? plural : false;
+	}
 	
 }
