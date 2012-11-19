@@ -11,7 +11,7 @@ import edu.stanford.nlp.util.StringUtils;
 
 
 public class coreference {
-	private static Integer idCounter = 0;
+	public static Integer idCounter = 0;
 	/**
 	 * @param args
 	 */
@@ -128,42 +128,21 @@ public class coreference {
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
 				//matcher.setList(n);
 				//matcher.setCoref(corefNP);
+				Hobb h = new Hobb();
+				if(corefNP.hasPronoun())
+				{
+					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
+				}
+				else{
 				int matchId = -1;
 				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
 				if(matchId > -1){
 					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
 					idCounter++;
 				}
+				}
 				nounPhrasesList.add(corefNP);
 				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
-				
-				//Find the index of <COREF> --> Sentence Splitter --> Parse/POS/Tokenize/etc all sentences
-				
-				/**
-				 * 
-				 */
-				//Should return/end/result in list of NP candidates w/ features filled out
-				//Proceed to match
-				//String matching
-				
-				
-				/**
-				 * Only needs list of NPs
-				 * 
-				 */
-				// Match Named Entities
-				
-				// Match Head Nouns
-				// Match Full/Partial String
-				//Add Sentence if not already there
-				//Hobbs
-				/**
-				 * Requires a full parse BUT CAN BE MODIFIED TO USE SHALLOW PARSE!
-				 * Good for pronoun resolution
-				 * 
-				 */
-				//Feature Scoring
-				//Matching unmatched corefs to previous NP based on how closely features match (gender,number,person,semantics)
 			}
 			StringMatcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir, nounPhrasesList);
 			idCounter = 1;

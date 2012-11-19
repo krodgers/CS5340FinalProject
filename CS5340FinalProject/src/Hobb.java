@@ -89,12 +89,38 @@ public class Hobb {
 		
 		return false;
 	}
+	//First Person
+//	I, me, my, mine, myself
+//	We, us, our, ours, ourselves
+	
+	//Second Person
+//	You, you, your, yours, yourself
+//	You, you, your, yours, yourselves
+	
+	//Third Person
+//	He, him, his, his, himself
+//	She, her, her, hers, herself
+//	It, it, its, ---, itself
+//	They, them, their, theirs, themselves
+
 	private boolean scoreNP(NounPhrase coref, NounPhrase otherNP) {
 
-		
-		int score = 0;
-		
-		return score > 5 ? true : false;
+		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
+		{
+			if(otherNP.getId() == null)
+			{
+				otherNP.setId("X"+coreference.idCounter);
+				coref.setRef("X"+coreference.idCounter);
+				coreference.idCounter ++;
+			}
+			else
+			{
+				coref.setRef(otherNP.getId());
+			}
+			return true;
+		}
+			
+		return false;
 	}
 	/**
 	 * Creates a full parse of the sentence
