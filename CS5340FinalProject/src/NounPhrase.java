@@ -146,5 +146,13 @@ public class NounPhrase {
 	public boolean isPlural(){
 		return plural != null ? plural : false;
 	}
+	public String getGender() {
+		
+		return this.gender.toString();
+	}
+	public boolean hasPronoun() {
+		// TODO Auto-generated method stub
+		return this.containsPronoun;
+	}
 	
 }

@@ -35,29 +35,49 @@ public class Hobb {
 		//Split sentences
 		//String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London. The king of London is highly esteemed.";
 		PreProcessing processor = new PreProcessing();
-		ArrayList<String> sents = processor.splitSentences(context);
+		ArrayList<String> sents = processor.splitSentences(context, System.getProperty("user.dir"));
 		//Do full parse of sentences
 		//Get the NP in order
 		ArrayList<String> npList = new ArrayList<String>();
 		ArrayList<Tree> parsedNP;
-		for(int x = sents.size() - 1; x >= 0; x--)
+
+		
+		// Parse the sentence
+		parsedNP = parserUtil.fullParse(sents.get(sents.size() - 1));
+		// Get the NPs out of the sentence
+		for(Tree t : parsedNP)
 		{
+			npList.add(t.getLeaves().toString());
+		}
+		
+		int stIdx = npList.indexOf(corefNP.getPhrase());
+		boolean matched = false;
+		// Start in same sentence as coref; search R-> L
+		for(int i = stIdx - 1; i >= 0; i--)
+		{
+			matched = scoreNP(corefNP, NPList.get(npList.get(stIdx)));
+			if(matched)
+				return true;
+		}
+
+		// Iterate over the other sentences
+		for(int x = sents.size() - 2; x >= 0; x--)
+		{
+			npList.clear();
 			parsedNP = parserUtil.fullParse(sents.get(x));
-			for(Tree t : parsedNP)
+			for(Tree t: parsedNP)
 			{
 				npList.add(t.getLeaves().toString());
 			}
-			int stIdx = npList.indexOf(corefNP.getPhrase());
-			for(int i = stIdx - 1; i >= 0; i--)
+			for(int i = 0; i < npList.size(); i++)
 			{
-				scoreNP(corefNP.getPhrase(), npList(stIdx));
-				
+				matched = scoreNP(corefNP, NPList.get(npList.get(stIdx)));
+				if(matched)
+					return true;
 			}
 			
 		}
-		
-		
-	
+
 		/**
 		 * noun groups are searched in the following order: 
 			In current sentence, R->L, starting from L of PRO
@@ -67,6 +87,39 @@ public class Hobb {
 		 */
 		
 		
+		return false;
+	}
+	//First Person
+//	I, me, my, mine, myself
+//	We, us, our, ours, ourselves
+	
+	//Second Person
+//	You, you, your, yours, yourself
+//	You, you, your, yours, yourselves
+	
+	//Third Person
+//	He, him, his, his, himself
+//	She, her, her, hers, herself
+//	It, it, its, ---, itself
+//	They, them, their, theirs, themselves
+
+	private boolean scoreNP(NounPhrase coref, NounPhrase otherNP) {
+
+		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
+		{
+			if(otherNP.getId() == null)
+			{
+				otherNP.setId("X"+coreference.idCounter);
+				coref.setRef("X"+coreference.idCounter);
+				coreference.idCounter ++;
+			}
+			else
+			{
+				coref.setRef(otherNP.getId());
+			}
+			return true;
+		}
+			
 		return false;
 	}
 	/**

@@ -9,7 +9,7 @@ import edu.stanford.nlp.trees.Tree;
 public class parserUtil {
 
 	static LexicalizedParser lp = LexicalizedParser.loadModel("edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz");
-	
+	private enum PERSON {THIRD, NOTTHIRD, DONTKNOW};
 	
 	public parserUtil() {
 		
@@ -85,5 +85,27 @@ public class parserUtil {
 			return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * Does a full parse of the sentence
+	 * Returns if the main verb is 3rd person, not 3rd person, or cannot be determined
+	 */
+	public static String parseVerbs(String sentence)
+	{
+		PERSON person = PERSON.DONTKNOW;
+		Tree parsed = lp.apply(sentence);
+		for(Tree t: parsed.preOrderNodeList())	                
+		{
+			if((t.label().value().equals("VBP")))
+			{
+				person = PERSON.NOTTHIRD;
+			}
+			if(t.label().value().equals("VBZ"))
+			{
+				person = PERSON.THIRD;
+			}
+		}
+		return person.toString();
 	}
 }
