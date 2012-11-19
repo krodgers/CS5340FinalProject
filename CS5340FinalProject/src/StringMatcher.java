@@ -2,6 +2,18 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
+import com.sun.org.apache.bcel.internal.generic.DCONST;
+
+import opennlp.tools.coref.sim.GenderModel;
+
+import rita.wordnet.RiWordnet;
+import rita.wordnet.WordnetUtil;
+
+import edu.stanford.nlp.dcoref.Dictionaries.Person;
+import edu.stanford.nlp.pipeline.Annotation;
+import edu.stanford.nlp.pipeline.GenderAnnotator;
+import edu.stanford.nlp.trees.BobChrisTreeNormalizer;
+
 /**
  * This class is a collection of static methods that will take care of string matching
  * @author James
@@ -206,6 +218,11 @@ public class StringMatcher {
 		}
 		
 		//System.out.println("");
+	}
+	public static void test(NounPhrase np){
+		RiWordnet bob = new RiWordnet()
+		bob.getHypernyms("bob", "bob");
+		
 	}
 
 }

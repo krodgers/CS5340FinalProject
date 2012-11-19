@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import rita.wordnet.*;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
@@ -122,6 +123,7 @@ public class coreference {
 				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
 					nounPhraseMap.put(np.getPhrase(), np);
+					StringMatcher.test(np);
 					nounPhrasesList.add(np);
 				}
 				
