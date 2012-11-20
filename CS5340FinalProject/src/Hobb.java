@@ -71,7 +71,7 @@ public class Hobb {
 			}
 			for(int i = 0; i < npList.size(); i++)
 			{
-				matched = scoreNP(corefNP, NPList.get(npList.get(stIdx)));
+				matched = scoreNP(corefNP, NPList.get(npList.get(i)));
 				if(matched)
 					return true;
 			}
