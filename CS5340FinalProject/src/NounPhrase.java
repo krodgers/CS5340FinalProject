@@ -150,6 +150,10 @@ public class NounPhrase {
 		
 		return this.gender.toString();
 	}
+	public void setGender(Gender g)
+	{
+		this.gender = g;
+	}
 	public boolean hasPronoun() {
 		// TODO Auto-generated method stub
 		return this.containsPronoun;

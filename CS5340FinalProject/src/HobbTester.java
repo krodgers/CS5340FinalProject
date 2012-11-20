@@ -1,19 +1,51 @@
 import java.io.File;
+import java.util.HashMap;
+
+
+
 
 
 public class HobbTester {
-
+	
 	/**
 	 * Tests the Hobb Class
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		Hobb h = new Hobb();
-		File input = new File("HobbsTestFile.txt");
-	//	h.runHobbs("it", "The castle in Camelot remained the residence of the king until 536 when he moved it to London.");
+		/**
+		 * Henry had twelve wives.  He was a very unhappy man.
+		 */
+		NounPhrase cof = new NounPhrase("He", "A");
+		cof.setPlural(false);
+		cof.setPronoun(true);
+		cof.setGender(NounPhrase.Gender.MALE);
+		
+		NounPhrase onp = new NounPhrase("Henry", "");
+		onp.setPlural(false);
+		onp.setPronoun(false);
+		onp.setGender(NounPhrase.Gender.MALE);
+		
+		NounPhrase oonp = new NounPhrase("twelve wives", "");
+		oonp.setPlural(true);
+		oonp.setPronoun(false);
+		oonp.setGender(NounPhrase.Gender.FEMALE);
+		
+		String cxt = "Henry had twelve wives. He";
+		
+		HashMap<String, NounPhrase> nphm = new HashMap<String, NounPhrase>();
+		nphm.put(cof.getPhrase(), cof);
+		nphm.put(onp.getPhrase(), onp);
+		nphm.put(oonp.getPhrase(), oonp);
+		
+		h.runHobbs(cof, cxt, nphm);
+		
+		for(String s : nphm.keySet())
+		{
+			System.out.println(nphm.get(s).getPhrase() + "  " + nphm.get(s).getId());
+		}
 
-		String per = parserUtil.parseVerbs("  Neither Mr. Ferris nor the board of directors has any desire to break the pilots' union. ");
-		System.out.println("Result: " + per);
+		
 	}
 
 }
