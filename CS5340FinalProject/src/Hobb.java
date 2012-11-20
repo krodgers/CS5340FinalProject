@@ -4,23 +4,10 @@
  *
  */
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import edu.stanford.nlp.parser.lexparser.LexicalizedParser;
-import edu.stanford.nlp.trees.CollinsHeadFinder;
-import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.Trees;
-
-import opennlp.tools.cmdline.parser.ParserTool;
-import opennlp.tools.parser.*;
-import opennlp.tools.util.Span;
 public class Hobb {
 
 	/**
@@ -40,40 +27,42 @@ public class Hobb {
 		//Get the NP in order
 		ArrayList<String> npList = new ArrayList<String>();
 		ArrayList<Tree> parsedNP;
-
+		boolean matched = false;
 		
 		// Parse the sentence
 		parsedNP = parserUtil.fullParse(sents.get(sents.size() - 1));
-		// Get the NPs out of the sentence
-		for(Tree t : parsedNP)
+		if(parsedNP != null)
 		{
-			npList.add(t.getLeaves().toString());
+			// Get the NPs out of the sentence
+			for(Tree t : parsedNP)
+			{
+				npList.add(t.getLeaves().toString());
+			}
+			// Start in same sentence as coref; search R-> L
+			for(int i = npList.size() - 1; i >= 0; i--)
+			{
+				matched = scoreNP(corefNP, NPList.get(npList.get(i)));
+				if(matched)
+					return true;
+			}
 		}
-		
-		int stIdx = npList.indexOf(corefNP.getPhrase());
-		boolean matched = false;
-		// Start in same sentence as coref; search R-> L
-		for(int i = stIdx - 1; i >= 0; i--)
-		{
-			matched = scoreNP(corefNP, NPList.get(npList.get(stIdx)));
-			if(matched)
-				return true;
-		}
-
 		// Iterate over the other sentences
 		for(int x = sents.size() - 2; x >= 0; x--)
 		{
 			npList.clear();
 			parsedNP = parserUtil.fullParse(sents.get(x));
-			for(Tree t: parsedNP)
+			if(parsedNP != null)
 			{
-				npList.add(t.getLeaves().toString());
-			}
-			for(int i = 0; i < npList.size(); i++)
-			{
-				matched = scoreNP(corefNP, NPList.get(npList.get(stIdx)));
-				if(matched)
-					return true;
+				for(Tree t: parsedNP)
+				{
+					npList.add(t.getLeaves().toString());
+				}
+				for(int i = 0; i < npList.size(); i++)
+				{
+					matched = scoreNP(corefNP, NPList.get(npList.get(i)));
+					if(matched)
+						return true;
+				}
 			}
 			
 		}
