@@ -36,7 +36,7 @@ public class Hobb {
 			// Get the NPs out of the sentence
 			for(Tree t : parsedNP)
 			{
-				npList.add(t.getLeaves().toString());
+				npList.add(createNP(t).getPhrase());
 			}
 			// Start in same sentence as coref; search R-> L
 			for(int i = npList.size() - 1; i >= 0; i--)
@@ -78,6 +78,24 @@ public class Hobb {
 		
 		return false;
 	}
+	
+	/**
+	 * Creates a NP object
+	 * @param npTree
+	 * @return
+	 */
+	private NounPhrase createNP(Tree npTree) {
+		NounPhrase temp = new NounPhrase();//a new nounphrase cadidate
+		for(Tree t : npTree){
+			if(t.isPreTerminal()){//checks if the noun phrase tree is the parent of some leaves
+				for(Tree leaf :t.getLeaves()){//get all the leaves of the parent node
+					if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
+						temp.addToPhrase(leaf.value(), t.value());
+				}
+			}
+		}	
+		return temp;
+	}
 	//First Person
 //	I, me, my, mine, myself
 //	We, us, our, ours, ourselves
@@ -93,7 +111,10 @@ public class Hobb {
 //	They, them, their, theirs, themselves
 
 	private boolean scoreNP(NounPhrase coref, NounPhrase otherNP) {
-
+		if(coref == null || otherNP == null)
+		{
+			return false;
+		}
 		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
 		{
 			if(otherNP.getId() == null)
