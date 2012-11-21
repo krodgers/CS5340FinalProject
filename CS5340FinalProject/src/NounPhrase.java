@@ -154,5 +154,8 @@ public class NounPhrase {
 		// TODO Auto-generated method stub
 		return this.containsPronoun;
 	}
+	public ArrayList<String> getPhraseAsList(){
+		return phrase;
+	}
 	
 }

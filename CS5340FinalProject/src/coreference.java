@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
-import rita.wordnet.*;
 
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
@@ -123,26 +122,26 @@ public class coreference {
 				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
 					nounPhraseMap.put(np.getPhrase(), np);
-					StringMatcher.test(np);
 					nounPhrasesList.add(np);
 				}
 				
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
 				//matcher.setList(n);
 				//matcher.setCoref(corefNP);
-				Hobb h = new Hobb();
-				if(corefNP.hasPronoun())
-				{
-					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
-				}
-				else{
+			//	Hobb h = new Hobb();
+			//	if(corefNP.hasPronoun())
+			//	{
+			//		h.runHobbs(corefNP, currChunk,  nounPhraseMap);
+			//	}
+			//	else{
+				//processor.test();
 				int matchId = -1;
 				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
 				if(matchId > -1){
 					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
 					idCounter++;
 				}
-				}
+				
 				nounPhrasesList.add(corefNP);
 				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
 			}
