@@ -4,11 +4,13 @@ public class NounPhrase {
 	
 	public enum Classification { NONE, PERSON, ORGANIZATION, LOCATION, MISC, PERCENT, MONEY, DATE, TIME };
 	public enum Gender {NONE, MALE, FEMALE};
+	public enum Person {FIRST, SECOND, THIRD};
 	private String id;  // from <Coref id = ""
 	//private String phrase; // <Coref > phrase </Coref>
 	private String ref; // from <Coref ref = ""
 	private Classification classification;  // NER classification
 	private Gender gender;
+	private Person person;
 	private Boolean plural;
 	private int sentenceID;
 	private boolean containsPronoun;
@@ -17,10 +19,13 @@ public class NounPhrase {
 	private ArrayList<NamedEntity> namedEntities;
 	private String headPhrase;
 	private String pronoun;
+	private boolean isCountry;
+	
 	
 	
 	public NounPhrase() {
 		pronoun = null;
+		isCountry = false;
 		headPhrase = null;
 		containsPronoun = false;
 		phrase = new ArrayList<String>();
@@ -28,6 +33,7 @@ public class NounPhrase {
 		id = null;
 		ref = null;
 		classification = Classification.NONE;
+		person = Person.THIRD;
 		 gender  = Gender.NONE;
 		 plural = null;
 		 namedEntities = new ArrayList<NamedEntity>(5);
@@ -159,12 +165,30 @@ public class NounPhrase {
 	{
 		this.gender = g;
 	}
+	public void setPerson(Person p){
+		this.person = p;
+	}
 	public boolean hasPronoun() {
 		// TODO Auto-generated method stub
 		return this.containsPronoun;
 	}
 	public ArrayList<String> getPhraseAsList(){
 		return phrase;
+	}
+	public String getPronoun(){
+		return pronoun;
+	}
+	public Person getPerson(){
+		return person;
+	}
+	public boolean isCountry(){
+		return isCountry;
+	}
+	public void setCountry(boolean isCountry){
+		this.isCountry = isCountry;
+	}
+	public void setHeadPhrase(String s){
+		headPhrase = s;
 	}
 	
 }

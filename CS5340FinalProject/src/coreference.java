@@ -5,6 +5,7 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.StringUtils;
@@ -12,6 +13,7 @@ import edu.stanford.nlp.util.StringUtils;
 
 public class coreference {
 	public static Integer idCounter = 0;
+	private static Dictionaries d = new Dictionaries();
 	/**
 	 * @param args
 	 */
@@ -29,6 +31,7 @@ public class coreference {
 		String curDir = System.getProperty("user.dir");
 		//String serializedClassifier = curDir+ "/classifiers/english.all.3class.distsim.crf.ser.gz";
 		String serializedClassifier = curDir+ "/classifiers/english.conll.4class.distsim.crf.ser.gz";
+		
 		ArrayList<String> sentences = new ArrayList<String>();
 		CRFClassifier classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
 		PreProcessing processor = new PreProcessing();
@@ -128,12 +131,8 @@ public class coreference {
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
 				//matcher.setList(n);
 				//matcher.setCoref(corefNP);
-			//	Hobb h = new Hobb();
-			//	if(corefNP.hasPronoun())
-			//	{
-			//		h.runHobbs(corefNP, currChunk,  nounPhraseMap);
-			//	}
-			//	else{
+				
+				
 				//processor.test();
 				int matchId = -1;
 				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
@@ -142,8 +141,14 @@ public class coreference {
 					idCounter++;
 				}
 				
+//				Hobb h = new Hobb();
+//				if(corefNP.hasPronoun())
+//				{
+//					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
+//				}
 				nounPhrasesList.add(corefNP);
 				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
+				
 			}
 			StringMatcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir, nounPhrasesList);
 			idCounter = 1;
@@ -158,13 +163,12 @@ public class coreference {
 	
 	private static NounPhrase extractNounPhrase(String sent,
 			CRFClassifier classifier, PreProcessing processor) {
-		
 		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
 		for(Tree t : npTrees){
 			//call the createNP method in PreProcessing.java file which will extract the Noun phrases
 			//from the np tree and populate the features of each extracted nounphrase
-			NounPhrase addCandidate = processor.createNP(t, classifier);
+			NounPhrase addCandidate = processor.createNP(t, classifier, d);
 			return addCandidate;
 		}
 		return null;
@@ -172,6 +176,7 @@ public class coreference {
 	
 	private static ArrayList<NounPhrase> extractSplitNounPhrases(String sent,
 			CRFClassifier classifier, PreProcessing processor) {
+		
 		ArrayList<NounPhrase> returnCandidates = new ArrayList<NounPhrase>();
 		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
@@ -179,7 +184,7 @@ public class coreference {
 				for(Tree split : processor.splitNP(t)){
 					//call the createNP method in PreProcessing.java file which will extract the Noun phrases
 					//from the np tree and populate the features of each extracted nounphrase
-					NounPhrase addCandidate = processor.createNP(split, classifier);
+					NounPhrase addCandidate = processor.createNP(split, classifier, d);
 					if(addCandidate != null){
 						returnCandidates.add(addCandidate);
 					}
@@ -205,7 +210,7 @@ public class coreference {
 		//Get the tree containing the noun phrase
 		Tree corefTree = corefNPTree.get(0);
 		//create
-		corefNP = processor.createNP(corefTree, classifier);
+		corefNP = processor.createNP(corefTree, classifier, d);
 		corefNP.setId(idNum);
 		return corefNP;
 	}

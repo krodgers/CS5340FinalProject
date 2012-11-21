@@ -38,6 +38,8 @@ import edu.mit.jwi.item.IWord;
 import edu.mit.jwi.item.IWordID;
 import edu.mit.jwi.item.POS;
 import edu.mit.jwi.item.Pointer;
+import edu.stanford.nlp.dcoref.Dictionaries;
+import edu.stanford.nlp.dcoref.Dictionaries.Gender;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
 import edu.stanford.nlp.trees.Tree;
@@ -407,9 +409,10 @@ public class PreProcessing {
 		 * phrase's properties.
 		 * @param npTree
 		 * @param classifier
+		 * @param d 
 		 * @return
 		 */
-		public NounPhrase createNP(Tree npTree, AbstractSequenceClassifier classifier){
+		public NounPhrase createNP(Tree npTree, AbstractSequenceClassifier classifier, Dictionaries d){
 			//extract pos tags
 			NounPhrase temp = new NounPhrase();//a new nounphrase cadidate
 			for(Tree t : npTree){
@@ -435,6 +438,7 @@ public class PreProcessing {
 					}
 					temp.addHeadPhrase(headPhrase);
 			}
+			setPronouns(temp);
 			//find NER
 			FindNer(temp, classifier);
 			//determine number
@@ -445,16 +449,25 @@ public class PreProcessing {
 			all need to be done*/
 			//determineGender(temp);
 			//check if the nounphrase contains a pronoun
-			setPronouns(temp);
-			setViewPoint(temp);
+			
+			setViewPoint(temp, d);
 			return temp;
 		}		
-		
-		
 
-		private void setViewPoint(NounPhrase temp) {
+		private void setViewPoint(NounPhrase temp, Dictionaries d) {
 			if(temp.hasPronoun()){
-				ArrayList<String> headPhrase = temp.getPhraseAsList();
+				String pronoun = temp.getPronoun().trim().toLowerCase();
+				if(pronoun != null){
+					
+					//check if the pronoun is second person
+					if(d.secondPersonPronouns.contains(pronoun))
+						temp.setPerson(NounPhrase.Person.SECOND);
+					else
+						//check if pronoun is first person
+						if(d.firstPersonPronouns.contains(pronoun))
+							temp.setPerson(NounPhrase.Person.FIRST);
+						//default is third person
+				}
 				
 			}
 			
@@ -478,102 +491,4 @@ public class PreProcessing {
 			return returnTrees;
 		
 		}
-
-		public void test() {
-			
-			try{
-				String wnhome = System.getenv("WNHOME");
-				String path = wnhome + File.separator + "dict";
-				URL url = new URL("file", null, path);
-			//System.setProperty("wordnet.database.dir", url);
-			IDictionary dict = new Dictionary(url);
-			dict.open();
-			IIndexWord idxWord = dict.getIndexWord("dog", POS.NOUN);
-			IWordID wordID = idxWord.getWordIDs().get(0);
-			IWord word = dict.getWord(wordID);
-			System.out.println("Id = " + wordID);
-			System.out.println("Lemma = " + word.getLemma());
-			System.out.println("Gloss = " + word.getSynset().getGloss());
-			//getHypernyms(dict);
-			}catch(Exception e){e.printStackTrace();}
-			
-			
-		}
-
-	private void determineGender(NounPhrase phrase) {
-		try {
-			String wnhome = System.getenv("WNHOME");
-			String path = wnhome + File.separator + "dict";
-			URL url = new URL("file", null, path);
-			// System.setProperty("wordnet.database.dir", url);
-			IDictionary dict = new Dictionary(url);
-			dict.open();
-
-			
-			String[] temp = phrase.getHeadPhrase().split(" ");
-			for (String s : temp) {
-				IIndexWord idxWord = dict.getIndexWord(s, POS.NOUN);
-				if(idxWord == null)//not found
-				{
-					continue;
-				}
-				IWordID wordID = idxWord.getWordIDs().get(0); // 1st meaning
-				IWord word = dict.getWord(wordID);
-				ISynset synset = word.getSynset();
-
-				// get the hypernyms
-
-				ILexFile profile = synset.getLexicalFile();
-				if(profile.getName().contains("person"))
-					getHypernyms(dict, s);
-			}
-
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-	}
-		public void getHypernyms(IDictionary dict, String s){
-			
-		// get the synset
-
-		IIndexWord idxWord = dict.getIndexWord(s, POS.NOUN);
-		if(idxWord == null)
-			return;
-		IWordID wordID = idxWord.getWordIDs().get(0); // 1st meaning
-
-		IWord word = dict.getWord(wordID);
-		ISynset synset = word.getSynset();
-
-		// get the hypernyms
-		
-		List<ISynsetID> hypernyms =
-
-		synset.getRelatedSynsets(Pointer.HYPERNYM);
-
-		// print out each hypernym s id and synonyms
-
-		List<IWord> words;
-
-		for (ISynsetID sid : hypernyms) {
-
-			words = dict.getSynset(sid).getWords();
-
-			System.out.print(sid + " {");
-
-			for (Iterator<IWord> i = words.iterator(); i.hasNext();) {
-
-				System.out.print(i.next().getLemma());
-
-				if (i.hasNext())
-
-					System.out.print(", ");
-
-			}
-
-			System.out.println("}");
-
-		}
-
-	}
 }

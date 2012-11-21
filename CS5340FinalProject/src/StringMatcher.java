@@ -35,7 +35,7 @@ public class StringMatcher {
 			for(NounPhrase.NamedEntity ce: candNEList){
 				for(NounPhrase.NamedEntity cre: corefNEList){
 					//for each named entity in the coref and candidate's list. check to see if thier phrases match.
-					if(ce.phrase.contains(cre.phrase))
+					if(ce.phrase.toLowerCase().trim().contains(cre.phrase.toLowerCase().trim()))
 								return 1;
 				}
 			}
@@ -43,6 +43,22 @@ public class StringMatcher {
 		return 0;
 	}
 		
+	public static int partialHeadMatch(NounPhrase candidate, NounPhrase coref){
+		for(String c : candidate.getHeadPhrase().split(" "))
+			for(String cr : coref.getHeadPhrase().split(" ")){
+				if(c.toLowerCase().trim().equals(cr.toLowerCase().trim()))
+					return 1;				
+			}
+		for(String c : candidate.getHeadPhrase().split(" "))
+			for(String cr : coref.getHeadPhrase().split(" ")){
+				String[] ca = c.split(" ");
+				String[] cra = cr.split(" ");
+				if(ca.length > 0 && cra.length > 0)
+					if(ca[ca.length-1].equals(cra[cra.length-1]))
+						return 1;
+			}
+		return 0;
+	}
 	
 	/**
 	 * This method will take a candidate Noun phrase and compare its head phrase with the coreference's
@@ -105,14 +121,10 @@ public class StringMatcher {
 		for(int i = list.size()-1; i > -1; i--){
 			int score = 0;
 			NounPhrase candidate = list.get(i);
-			if(coref.hasPronoun()){
-				return i;
-			}
 			score = fullStringMatchHeads(candidate, coref);
 			score += matchNE(candidate, coref);
 			score += containsStringMatch(candidate, coref);
-			score += pluralityMatch(candidate, coref);
-			//score += distance(candidate, coref);
+			score += partialHeadMatch(candidate, coref);
 			if(score > bestScore){
 				bestIndex = i;
 				bestScore = score;
@@ -156,6 +168,8 @@ public class StringMatcher {
 		}
 		
 	}
+	
+	
 	
 	/**
 	 * this method will cycle through a list of nounphrases and if it has a reference
