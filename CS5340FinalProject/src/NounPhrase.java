@@ -16,9 +16,11 @@ public class NounPhrase {
 	private ArrayList<String> phrase;
 	private ArrayList<NamedEntity> namedEntities;
 	private String headPhrase;
+	private String pronoun;
 	
 	
 	public NounPhrase() {
+		pronoun = null;
 		headPhrase = null;
 		containsPronoun = false;
 		phrase = new ArrayList<String>();
@@ -120,7 +122,10 @@ public class NounPhrase {
 		return posTags;
 	}
 	
-	public void setPronoun(Boolean isPronoun){
+	public void setPronoun(Boolean isPronoun, String pronoun){
+		if(isPronoun){
+			this.pronoun = pronoun;
+		}
 		containsPronoun = isPronoun;
 	}
 	public void setPlural(Boolean isPlural){

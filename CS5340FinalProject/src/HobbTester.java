@@ -18,17 +18,17 @@ public class HobbTester {
 		 */
 		NounPhrase cof = new NounPhrase("He", "A");
 		cof.setPlural(false);
-		cof.setPronoun(true);
+		cof.setPronoun(true, "He");
 		cof.setGender(NounPhrase.Gender.MALE);
 		
 		NounPhrase onp = new NounPhrase("Henry", "");
 		onp.setPlural(false);
-		onp.setPronoun(false);
+		onp.setPronoun(false, null);
 		onp.setGender(NounPhrase.Gender.MALE);
 		
 		NounPhrase oonp = new NounPhrase("twelve wives", "");
 		oonp.setPlural(true);
-		oonp.setPronoun(false);
+		oonp.setPronoun(false, null);
 		oonp.setGender(NounPhrase.Gender.FEMALE);
 		
 		String cxt = "Henry had twelve wives. He";

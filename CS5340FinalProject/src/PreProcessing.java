@@ -360,9 +360,10 @@ public class PreProcessing {
 		 * @param phrase
 		 */
 		private void setPronouns(NounPhrase phrase){
-			for(String tag: phrase.getPosTags()){
-				if(parserUtil.tagIsProunoun(tag)){
-					phrase.setPronoun(true);
+			ArrayList<String> posTags = phrase.getPosTags();
+			for(int i = 0; i < posTags.size(); i++){
+				if(parserUtil.tagIsProunoun(posTags.get(i))){
+					phrase.setPronoun(true, phrase.getPhraseAsList().get(i));
 					return;
 				}
 			}
@@ -442,13 +443,23 @@ public class PreProcessing {
 			find gender
 			
 			all need to be done*/
-			determineGender(temp);
+			//determineGender(temp);
 			//check if the nounphrase contains a pronoun
 			setPronouns(temp);
+			setViewPoint(temp);
 			return temp;
 		}		
 		
 		
+
+		private void setViewPoint(NounPhrase temp) {
+			if(temp.hasPronoun()){
+				ArrayList<String> headPhrase = temp.getPhraseAsList();
+				
+			}
+			
+			
+		}
 
 		public static ArrayList<Tree> splitNP(Tree npTree){
 			//ArrayList<Tree> temp = new ArrayList<Tree>();
