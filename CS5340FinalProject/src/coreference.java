@@ -43,7 +43,7 @@ public class coreference {
 		String listFileName = args[0];  // list of files to process; FOR DEBUGGING USE listFile.txt
 		String dir = args[1];	// directory where to store response files; assumes the final / is included
 		ArrayList<String> testFiles = getTestFiles(listFileName);
-		StringMatcher matcher = new StringMatcher();
+		//StringMatcher matcher = new StringMatcher();
 		for(String fileName : testFiles)
 		{
 			//Read in the file as one big huge string
@@ -149,6 +149,8 @@ public class coreference {
 			idCounter = 1;
 			nounPhrasesList.clear();
 			nounPhraseMap.clear();
+			sentences.clear();
+			
 		
 		}	
 
