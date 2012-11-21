@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.dcoref.Dictionaries;
 public class Hobb {
 
 	/**
@@ -33,6 +34,8 @@ public class Hobb {
 		parsedNP = parserUtil.fullParse(sents.get(sents.size() - 1));
 		if(parsedNP != null)
 		{
+			// Find Gender info about coref
+			findGender(corefNP);
 			// Get the NPs out of the sentence
 			for(Tree t : parsedNP)
 			{
@@ -41,6 +44,7 @@ public class Hobb {
 			// Start in same sentence as coref; search R-> L
 			for(int i = npList.size() - 1; i >= 0; i--)
 			{
+				findGender(NPList.get(npList.get(i)));
 				matched = scoreNP(corefNP, NPList.get(npList.get(i)));
 				if(matched)
 					return true;
@@ -79,6 +83,23 @@ public class Hobb {
 		return false;
 	}
 	
+	
+	/**
+	 * Assigns a gender to the noun phrase
+	 * @param corefNP
+	 */
+	private void findGender(NounPhrase nounPhrase) {
+		Dictionaries d = new Dictionaries();
+		if(d.femaleWords.contains(nounPhrase.getHeadPhrase()))
+				nounPhrase.setGender(NounPhrase.Gender.FEMALE);
+		else if(d.maleWords.contains(nounPhrase.getHeadPhrase()))
+			nounPhrase.setGender(NounPhrase.Gender.MALE);
+		else if(d.femalePronouns.contains(nounPhrase.getHeadPhrase()))
+			nounPhrase.setGender(NounPhrase.Gender.FEMALE);
+		else if(d.malePronouns.contains(nounPhrase.getHeadPhrase()))
+		nounPhrase.setGender(NounPhrase.Gender.MALE);
+	}
+
 	/**
 	 * Creates a NP object
 	 * @param npTree
@@ -132,23 +153,7 @@ public class Hobb {
 			
 		return false;
 	}
-	/**
-	 * Creates a full parse of the sentence
-	 */
-	public void fullParseStanford(String sentence)
-	{
-		//Print out all the Noun Phrases
-//		for(Tree t: parsed)
-//		{
-//			if(t.label().value().equals("NP"))
-//				System.out.println(t.getLeaves());
-//					
-//		}
 		
-		
-		
-	}
-	
 	/** Takes an array and creates a string
 	 * So {the,dog,ran} would be "the dog ran "
 	 */
