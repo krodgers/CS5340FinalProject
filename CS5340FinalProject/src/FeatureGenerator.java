@@ -6,7 +6,7 @@
   <head prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# githubog: http://ogp.me/ns/fb/githubog#">
     <meta charset='utf-8'>
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>CS5340FinalProject/CS5340FinalProject/src/parserUtil.java at 20295f7ad4964baaf396ddf7ce38b1af5415fb10 · brekkie/CS5340FinalProject</title>
+        <title>CS5340FinalProject/CS5340FinalProject/src/FeatureGenerator.java at 20295f7ad4964baaf396ddf7ce38b1af5415fb10 · brekkie/CS5340FinalProject</title>
     <link rel="search" type="application/opensearchdescription+xml" href="/opensearch.xml" title="GitHub" />
     <link rel="fluid-icon" href="https://github.com/fluidicon.png" title="GitHub" />
     <link rel="apple-touch-icon-precomposed" sizes="57x57" href="apple-touch-icon-114.png" />
@@ -32,7 +32,7 @@
     <script src="https://a248.e.akamai.net/assets.github.com/assets/github-65c8131db26cee4318983041a0339ebe444a0fd4.js" type="text/javascript"></script>
     
 
-      <link rel='permalink' href='/brekkie/CS5340FinalProject/blob/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/parserUtil.java'>
+      <link rel='permalink' href='/brekkie/CS5340FinalProject/blob/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/FeatureGenerator.java'>
     <meta property="og:title" content="CS5340FinalProject"/>
     <meta property="og:type" content="githubog:gitrepository"/>
     <meta property="og:url" content="https://github.com/brekkie/CS5340FinalProject"/>
@@ -301,7 +301,7 @@
                 <div class="commitish-item branch-commitish selector-item js-navigation-item js-navigation-target ">
                   <span class="mini-icon mini-icon-confirm"></span>
                   <h4>
-                      <a href="/brekkie/CS5340FinalProject/blob/master/CS5340FinalProject/src/parserUtil.java" class="js-navigation-open" data-name="master" rel="nofollow">master</a>
+                      <a href="/brekkie/CS5340FinalProject/blob/master/CS5340FinalProject/src/FeatureGenerator.java" class="js-navigation-open" data-name="master" rel="nofollow">master</a>
                   </h4>
                 </div>
             </div>
@@ -339,30 +339,46 @@
           
 
 
-<!-- blob contrib key: blob_contributors:v21:c7ac852bf2f317e2dcda1d9d918567d3 -->
-<!-- blob contrib frag key: views10/v8/blob_contributors:v21:c7ac852bf2f317e2dcda1d9d918567d3 -->
+<!-- blob contrib key: blob_contributors:v21:13f937d55c05f8d969f6aa6902de1aea -->
+<!-- blob contrib frag key: views10/v8/blob_contributors:v21:13f937d55c05f8d969f6aa6902de1aea -->
 
 <div id="slider">
 
 
     <p title="This is a placeholder element" class="js-history-link-replace hidden"></p>
-    <div class="breadcrumb" data-path="CS5340FinalProject/src/parserUtil.java/">
-      <span class='bold'><span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/brekkie/CS5340FinalProject/tree/20295f7ad4964baaf396ddf7ce38b1af5415fb10" class="js-slider-breadcrumb" itemscope="url" rel="nofollow"><span itemprop="title">CS5340FinalProject</span></a></span></span> / <span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/brekkie/CS5340FinalProject/tree/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject" class="js-slider-breadcrumb" itemscope="url" rel="nofollow"><span itemprop="title">CS5340FinalProject</span></a></span> / <span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/brekkie/CS5340FinalProject/tree/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src" class="js-slider-breadcrumb" itemscope="url" rel="nofollow"><span itemprop="title">src</span></a></span> / <strong class="final-path">parserUtil.java</strong> <span class="js-clippy mini-icon mini-icon-clippy " data-clipboard-text="CS5340FinalProject/src/parserUtil.java" data-copied-hint="copied!" data-copy-hint="copy to clipboard"></span>
+    <div class="breadcrumb" data-path="CS5340FinalProject/src/FeatureGenerator.java/">
+      <span class='bold'><span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/brekkie/CS5340FinalProject/tree/20295f7ad4964baaf396ddf7ce38b1af5415fb10" class="js-slider-breadcrumb" itemscope="url" rel="nofollow"><span itemprop="title">CS5340FinalProject</span></a></span></span> / <span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/brekkie/CS5340FinalProject/tree/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject" class="js-slider-breadcrumb" itemscope="url" rel="nofollow"><span itemprop="title">CS5340FinalProject</span></a></span> / <span itemscope="" itemtype="http://data-vocabulary.org/Breadcrumb"><a href="/brekkie/CS5340FinalProject/tree/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src" class="js-slider-breadcrumb" itemscope="url" rel="nofollow"><span itemprop="title">src</span></a></span> / <strong class="final-path">FeatureGenerator.java</strong> <span class="js-clippy mini-icon mini-icon-clippy " data-clipboard-text="CS5340FinalProject/src/FeatureGenerator.java" data-copied-hint="copied!" data-copy-hint="copy to clipboard"></span>
     </div>
 
     <a href="/brekkie/CS5340FinalProject/find/20295f7ad4964baaf396ddf7ce38b1af5415fb10" class="js-slide-to" data-hotkey="t" style="display:none">Show File Finder</a>
 
-      <div class="commit commit-loader file-history-tease js-deferred-content" data-url="/brekkie/CS5340FinalProject/contributors/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/parserUtil.java" data-path="CS5340FinalProject/src/parserUtil.java/">
-        Fetching contributors…
+      
+  <div class="commit file-history-tease" data-path="CS5340FinalProject/src/FeatureGenerator.java/">
+    <img class="main-avatar" height="24" src="https://secure.gravatar.com/avatar/beff9e67978a72200d53d343a24131de?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" width="24" />
+    <span class="author"><a href="/theblur05">theblur05</a></span>
+    <time class="js-relative-date" datetime="2012-10-21T16:39:47-07:00" title="2012-10-21 16:39:47">October 21, 2012</time>
+    <div class="commit-title">
+        <a href="/brekkie/CS5340FinalProject/commit/7254163e0d1a04764f1d2322eba97561bf6835d0" class="message">Added Project Classes</a>
+    </div>
 
-        <div class="participation">
-          <p class="loader-loading"><img alt="Octocat-spinner-32-eaf2f5" height="16" src="https://a248.e.akamai.net/assets.github.com/images/spinners/octocat-spinner-32-EAF2F5.gif?1338945075" width="16" /></p>
-          <p class="loader-error">Cannot retrieve contributors at this time</p>
-        </div>
-      </div>
+    <div class="participation">
+      <p class="quickstat"><a href="#blob_contributors_box" rel="facebox"><strong>1</strong> contributor</a></p>
+      
+    </div>
+    <div id="blob_contributors_box" style="display:none">
+      <h2>Users on GitHub who have contributed to this file</h2>
+      <ul class="facebox-user-list">
+        <li>
+          <img height="24" src="https://secure.gravatar.com/avatar/beff9e67978a72200d53d343a24131de?s=140&amp;d=https://a248.e.akamai.net/assets.github.com%2Fimages%2Fgravatars%2Fgravatar-user-420.png" width="24" />
+          <a href="/theblur05">theblur05</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+
 
     <div class="frames">
-      <div class="frame frame-center" data-path="CS5340FinalProject/src/parserUtil.java/" data-permalink-url="/brekkie/CS5340FinalProject/blob/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/parserUtil.java" data-title="CS5340FinalProject/CS5340FinalProject/src/parserUtil.java at 20295f7ad4964baaf396ddf7ce38b1af5415fb10 · brekkie/CS5340FinalProject · GitHub" data-type="blob">
+      <div class="frame frame-center" data-path="CS5340FinalProject/src/FeatureGenerator.java/" data-permalink-url="/brekkie/CS5340FinalProject/blob/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/FeatureGenerator.java" data-title="CS5340FinalProject/CS5340FinalProject/src/FeatureGenerator.java at 20295f7ad4964baaf396ddf7ce38b1af5415fb10 · brekkie/CS5340FinalProject · GitHub" data-type="blob">
 
         <div id="files" class="bubble">
           <div class="file">
@@ -370,13 +386,13 @@
               <div class="info">
                 <span class="icon"><b class="mini-icon mini-icon-text-file"></b></span>
                 <span class="mode" title="File Mode">file</span>
-                  <span>112 lines (94 sloc)</span>
-                <span>2.794 kb</span>
+                  <span>5 lines (2 sloc)</span>
+                <span>0.036 kb</span>
               </div>
               <ul class="button-group actions">
-                <li><a href="/brekkie/CS5340FinalProject/raw/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/parserUtil.java" class="minibutton grouped-button bigger lighter" id="raw-url">Raw</a></li>
-                  <li><a href="/brekkie/CS5340FinalProject/blame/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/parserUtil.java" class="minibutton grouped-button bigger lighter">Blame</a></li>
-                <li><a href="/brekkie/CS5340FinalProject/commits/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/parserUtil.java" class="minibutton grouped-button bigger lighter" rel="nofollow">History</a></li>
+                <li><a href="/brekkie/CS5340FinalProject/raw/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/FeatureGenerator.java" class="minibutton grouped-button bigger lighter" id="raw-url">Raw</a></li>
+                  <li><a href="/brekkie/CS5340FinalProject/blame/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/FeatureGenerator.java" class="minibutton grouped-button bigger lighter">Blame</a></li>
+                <li><a href="/brekkie/CS5340FinalProject/commits/20295f7ad4964baaf396ddf7ce38b1af5415fb10/CS5340FinalProject/src/FeatureGenerator.java" class="minibutton grouped-button bigger lighter" rel="nofollow">History</a></li>
               </ul>
             </div>
                 <div class="data type-java">
@@ -387,117 +403,10 @@
 <span id="L2" rel="#L2">2</span>
 <span id="L3" rel="#L3">3</span>
 <span id="L4" rel="#L4">4</span>
-<span id="L5" rel="#L5">5</span>
-<span id="L6" rel="#L6">6</span>
-<span id="L7" rel="#L7">7</span>
-<span id="L8" rel="#L8">8</span>
-<span id="L9" rel="#L9">9</span>
-<span id="L10" rel="#L10">10</span>
-<span id="L11" rel="#L11">11</span>
-<span id="L12" rel="#L12">12</span>
-<span id="L13" rel="#L13">13</span>
-<span id="L14" rel="#L14">14</span>
-<span id="L15" rel="#L15">15</span>
-<span id="L16" rel="#L16">16</span>
-<span id="L17" rel="#L17">17</span>
-<span id="L18" rel="#L18">18</span>
-<span id="L19" rel="#L19">19</span>
-<span id="L20" rel="#L20">20</span>
-<span id="L21" rel="#L21">21</span>
-<span id="L22" rel="#L22">22</span>
-<span id="L23" rel="#L23">23</span>
-<span id="L24" rel="#L24">24</span>
-<span id="L25" rel="#L25">25</span>
-<span id="L26" rel="#L26">26</span>
-<span id="L27" rel="#L27">27</span>
-<span id="L28" rel="#L28">28</span>
-<span id="L29" rel="#L29">29</span>
-<span id="L30" rel="#L30">30</span>
-<span id="L31" rel="#L31">31</span>
-<span id="L32" rel="#L32">32</span>
-<span id="L33" rel="#L33">33</span>
-<span id="L34" rel="#L34">34</span>
-<span id="L35" rel="#L35">35</span>
-<span id="L36" rel="#L36">36</span>
-<span id="L37" rel="#L37">37</span>
-<span id="L38" rel="#L38">38</span>
-<span id="L39" rel="#L39">39</span>
-<span id="L40" rel="#L40">40</span>
-<span id="L41" rel="#L41">41</span>
-<span id="L42" rel="#L42">42</span>
-<span id="L43" rel="#L43">43</span>
-<span id="L44" rel="#L44">44</span>
-<span id="L45" rel="#L45">45</span>
-<span id="L46" rel="#L46">46</span>
-<span id="L47" rel="#L47">47</span>
-<span id="L48" rel="#L48">48</span>
-<span id="L49" rel="#L49">49</span>
-<span id="L50" rel="#L50">50</span>
-<span id="L51" rel="#L51">51</span>
-<span id="L52" rel="#L52">52</span>
-<span id="L53" rel="#L53">53</span>
-<span id="L54" rel="#L54">54</span>
-<span id="L55" rel="#L55">55</span>
-<span id="L56" rel="#L56">56</span>
-<span id="L57" rel="#L57">57</span>
-<span id="L58" rel="#L58">58</span>
-<span id="L59" rel="#L59">59</span>
-<span id="L60" rel="#L60">60</span>
-<span id="L61" rel="#L61">61</span>
-<span id="L62" rel="#L62">62</span>
-<span id="L63" rel="#L63">63</span>
-<span id="L64" rel="#L64">64</span>
-<span id="L65" rel="#L65">65</span>
-<span id="L66" rel="#L66">66</span>
-<span id="L67" rel="#L67">67</span>
-<span id="L68" rel="#L68">68</span>
-<span id="L69" rel="#L69">69</span>
-<span id="L70" rel="#L70">70</span>
-<span id="L71" rel="#L71">71</span>
-<span id="L72" rel="#L72">72</span>
-<span id="L73" rel="#L73">73</span>
-<span id="L74" rel="#L74">74</span>
-<span id="L75" rel="#L75">75</span>
-<span id="L76" rel="#L76">76</span>
-<span id="L77" rel="#L77">77</span>
-<span id="L78" rel="#L78">78</span>
-<span id="L79" rel="#L79">79</span>
-<span id="L80" rel="#L80">80</span>
-<span id="L81" rel="#L81">81</span>
-<span id="L82" rel="#L82">82</span>
-<span id="L83" rel="#L83">83</span>
-<span id="L84" rel="#L84">84</span>
-<span id="L85" rel="#L85">85</span>
-<span id="L86" rel="#L86">86</span>
-<span id="L87" rel="#L87">87</span>
-<span id="L88" rel="#L88">88</span>
-<span id="L89" rel="#L89">89</span>
-<span id="L90" rel="#L90">90</span>
-<span id="L91" rel="#L91">91</span>
-<span id="L92" rel="#L92">92</span>
-<span id="L93" rel="#L93">93</span>
-<span id="L94" rel="#L94">94</span>
-<span id="L95" rel="#L95">95</span>
-<span id="L96" rel="#L96">96</span>
-<span id="L97" rel="#L97">97</span>
-<span id="L98" rel="#L98">98</span>
-<span id="L99" rel="#L99">99</span>
-<span id="L100" rel="#L100">100</span>
-<span id="L101" rel="#L101">101</span>
-<span id="L102" rel="#L102">102</span>
-<span id="L103" rel="#L103">103</span>
-<span id="L104" rel="#L104">104</span>
-<span id="L105" rel="#L105">105</span>
-<span id="L106" rel="#L106">106</span>
-<span id="L107" rel="#L107">107</span>
-<span id="L108" rel="#L108">108</span>
-<span id="L109" rel="#L109">109</span>
-<span id="L110" rel="#L110">110</span>
-<span id="L111" rel="#L111">111</span>
 </pre>
           </td>
           <td width="100%">
-                <div class="highlight"><pre><div class='line' id='LC1'><span class="kn">import</span> <span class="nn">java.util.ArrayList</span><span class="o">;</span></div><div class='line' id='LC2'><br/></div><div class='line' id='LC3'><span class="kn">import</span> <span class="nn">edu.stanford.nlp.parser.lexparser.LexicalizedParser</span><span class="o">;</span></div><div class='line' id='LC4'><span class="kn">import</span> <span class="nn">edu.stanford.nlp.parser.lexparser.Options</span><span class="o">;</span></div><div class='line' id='LC5'><span class="kn">import</span> <span class="nn">edu.stanford.nlp.trees.Tree</span><span class="o">;</span></div><div class='line' id='LC6'><br/></div><div class='line' id='LC7'><br/></div><div class='line' id='LC8'><br/></div><div class='line' id='LC9'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">parserUtil</span> <span class="o">{</span></div><div class='line' id='LC10'><br/></div><div class='line' id='LC11'>	<span class="kd">static</span> <span class="n">LexicalizedParser</span> <span class="n">lp</span> <span class="o">=</span> <span class="n">LexicalizedParser</span><span class="o">.</span><span class="na">loadModel</span><span class="o">(</span><span class="s">&quot;edu/stanford/nlp/models/lexparser/englishPCFG.ser.gz&quot;</span><span class="o">);</span></div><div class='line' id='LC12'>	<span class="kd">private</span> <span class="kd">enum</span> <span class="n">PERSON</span> <span class="o">{</span><span class="n">THIRD</span><span class="o">,</span> <span class="n">NOTTHIRD</span><span class="o">,</span> <span class="n">DONTKNOW</span><span class="o">};</span></div><div class='line' id='LC13'><br/></div><div class='line' id='LC14'>	<span class="kd">public</span> <span class="nf">parserUtil</span><span class="o">()</span> <span class="o">{</span></div><div class='line' id='LC15'><br/></div><div class='line' id='LC16'>	<span class="o">}</span></div><div class='line' id='LC17'><br/></div><div class='line' id='LC18'>	<span class="kd">private</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">minimum</span><span class="o">(</span><span class="kt">int</span> <span class="n">a</span><span class="o">,</span> <span class="kt">int</span> <span class="n">b</span><span class="o">,</span> <span class="kt">int</span> <span class="n">c</span><span class="o">)</span> <span class="o">{</span></div><div class='line' id='LC19'>		<span class="k">return</span> <span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">Math</span><span class="o">.</span><span class="na">min</span><span class="o">(</span><span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">),</span> <span class="n">c</span><span class="o">);</span></div><div class='line' id='LC20'>	<span class="o">}</span></div><div class='line' id='LC21'><br/></div><div class='line' id='LC22'>	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">int</span> <span class="nf">computeLevenshteinDistance</span><span class="o">(</span><span class="n">CharSequence</span> <span class="n">str1</span><span class="o">,</span> <span class="n">CharSequence</span> <span class="n">str2</span><span class="o">)</span> <span class="o">{</span></div><div class='line' id='LC23'>		<span class="kt">int</span><span class="o">[][]</span> <span class="n">distance</span> <span class="o">=</span> <span class="k">new</span> <span class="kt">int</span><span class="o">[</span><span class="n">str1</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">+</span> <span class="mi">1</span><span class="o">][</span><span class="n">str2</span><span class="o">.</span><span class="na">length</span><span class="o">()</span> <span class="o">+</span> <span class="mi">1</span><span class="o">];</span></div><div class='line' id='LC24'><br/></div><div class='line' id='LC25'>		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">str1</span><span class="o">.</span><span class="na">length</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span></div><div class='line' id='LC26'>			<span class="n">distance</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="mi">0</span><span class="o">]</span> <span class="o">=</span> <span class="n">i</span><span class="o">;</span></div><div class='line' id='LC27'>		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">str2</span><span class="o">.</span><span class="na">length</span><span class="o">();</span> <span class="n">j</span><span class="o">++)</span></div><div class='line' id='LC28'>			<span class="n">distance</span><span class="o">[</span><span class="mi">0</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">j</span><span class="o">;</span></div><div class='line' id='LC29'><br/></div><div class='line' id='LC30'>		<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">i</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="n">str1</span><span class="o">.</span><span class="na">length</span><span class="o">();</span> <span class="n">i</span><span class="o">++)</span></div><div class='line' id='LC31'>			<span class="k">for</span> <span class="o">(</span><span class="kt">int</span> <span class="n">j</span> <span class="o">=</span> <span class="mi">1</span><span class="o">;</span> <span class="n">j</span> <span class="o">&lt;=</span> <span class="n">str2</span><span class="o">.</span><span class="na">length</span><span class="o">();</span> <span class="n">j</span><span class="o">++)</span></div><div class='line' id='LC32'>				<span class="n">distance</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">=</span> <span class="n">minimum</span><span class="o">(</span></div><div class='line' id='LC33'>						<span class="n">distance</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="o">][</span><span class="n">j</span><span class="o">]</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span></div><div class='line' id='LC34'>						<span class="n">distance</span><span class="o">[</span><span class="n">i</span><span class="o">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="o">]</span> <span class="o">+</span> <span class="mi">1</span><span class="o">,</span></div><div class='line' id='LC35'>						<span class="n">distance</span><span class="o">[</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="o">][</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="o">]</span></div><div class='line' id='LC36'>								<span class="o">+</span> <span class="o">((</span><span class="n">str1</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="o">)</span> <span class="o">==</span> <span class="n">str2</span><span class="o">.</span><span class="na">charAt</span><span class="o">(</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="o">))</span> <span class="o">?</span> <span class="mi">0</span></div><div class='line' id='LC37'>										<span class="o">:</span> <span class="mi">1</span><span class="o">));</span></div><div class='line' id='LC38'><br/></div><div class='line' id='LC39'>		<span class="k">return</span> <span class="n">distance</span><span class="o">[</span><span class="n">str1</span><span class="o">.</span><span class="na">length</span><span class="o">()][</span><span class="n">str2</span><span class="o">.</span><span class="na">length</span><span class="o">()];</span></div><div class='line' id='LC40'>	<span class="o">}</span></div><div class='line' id='LC41'><br/></div><div class='line' id='LC42'>	<span class="cm">/**</span></div><div class='line' id='LC43'><span class="cm">	 * Does a full parse of the sentence</span></div><div class='line' id='LC44'><span class="cm">	 * Returns a list of Noun Phrase trees</span></div><div class='line' id='LC45'><span class="cm">	 */</span></div><div class='line' id='LC46'>	<span class="kd">public</span> <span class="kd">static</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Tree</span><span class="o">&gt;</span> <span class="n">fullParse</span><span class="o">(</span><span class="n">String</span> <span class="n">sentence</span><span class="o">)</span></div><div class='line' id='LC47'>	<span class="o">{</span></div><div class='line' id='LC48'>		<span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Tree</span><span class="o">&gt;</span> <span class="n">nounPhrases</span> <span class="o">=</span> <span class="k">new</span> <span class="n">ArrayList</span><span class="o">&lt;</span><span class="n">Tree</span><span class="o">&gt;();</span></div><div class='line' id='LC49'><br/></div><div class='line' id='LC50'>		<span class="n">Tree</span> <span class="n">parsed</span> <span class="o">=</span> <span class="n">lp</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">sentence</span><span class="o">);</span></div><div class='line' id='LC51'>		<span class="n">Tree</span> <span class="n">domnp</span> <span class="o">=</span> <span class="kc">null</span><span class="o">;</span></div><div class='line' id='LC52'>		<span class="k">for</span><span class="o">(</span><span class="n">Tree</span> <span class="nl">t:</span> <span class="n">parsed</span><span class="o">.</span><span class="na">preOrderNodeList</span><span class="o">())</span>	                </div><div class='line' id='LC53'>		<span class="o">{</span></div><div class='line' id='LC54'>			<span class="k">if</span><span class="o">(</span><span class="n">t</span><span class="o">.</span><span class="na">isPhrasal</span><span class="o">())</span></div><div class='line' id='LC55'>			<span class="o">{</span></div><div class='line' id='LC56'>				<span class="k">if</span><span class="o">(((</span><span class="n">t</span><span class="o">.</span><span class="na">label</span><span class="o">().</span><span class="na">value</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;NP&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="n">domnp</span><span class="o">==</span><span class="kc">null</span><span class="o">)</span> <span class="o">||</span> <span class="o">(</span><span class="n">t</span><span class="o">.</span><span class="na">label</span><span class="o">().</span><span class="na">value</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;NP&quot;</span><span class="o">)</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">domnp</span><span class="o">.</span><span class="na">dominates</span><span class="o">(</span><span class="n">t</span><span class="o">)))</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="n">t</span><span class="o">.</span><span class="na">pennString</span><span class="o">().</span><span class="na">contains</span><span class="o">(</span><span class="s">&quot;VP&quot;</span><span class="o">))</span></div><div class='line' id='LC57'>				<span class="o">{</span></div><div class='line' id='LC58'>					<span class="n">domnp</span> <span class="o">=</span> <span class="n">t</span><span class="o">;</span></div><div class='line' id='LC59'>					<span class="n">nounPhrases</span><span class="o">.</span><span class="na">add</span><span class="o">(</span><span class="n">t</span><span class="o">);</span></div><div class='line' id='LC60'>				<span class="o">}</span></div><div class='line' id='LC61'>			<span class="o">}</span></div><div class='line' id='LC62'>&nbsp;&nbsp;&nbsp;		<span class="o">}</span></div><div class='line' id='LC63'><br/></div><div class='line' id='LC64'>		<span class="k">return</span> <span class="n">nounPhrases</span><span class="o">;</span></div><div class='line' id='LC65'>	<span class="o">}</span></div><div class='line' id='LC66'><br/></div><div class='line' id='LC67'>	<span class="cm">/**</span></div><div class='line' id='LC68'><span class="cm">	 * checks if a tag is a nounphrase</span></div><div class='line' id='LC69'><span class="cm">	 * @param tag</span></div><div class='line' id='LC70'><span class="cm">	 * @return true if a nounphrase</span></div><div class='line' id='LC71'><span class="cm">	 */</span></div><div class='line' id='LC72'>	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">tagIsProunoun</span><span class="o">(</span><span class="n">String</span> <span class="n">tag</span><span class="o">){</span></div><div class='line' id='LC73'>		<span class="n">String</span> <span class="n">temp</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="na">toUpperCase</span><span class="o">();</span></div><div class='line' id='LC74'>		<span class="k">if</span><span class="o">(</span><span class="n">temp</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;WP&quot;</span><span class="o">)</span> <span class="o">||</span> <span class="n">temp</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;WP$&quot;</span><span class="o">)</span> <span class="o">||</span> <span class="n">temp</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;PRP$&quot;</span><span class="o">)</span> <span class="o">||</span> <span class="n">temp</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;PRP&quot;</span><span class="o">))</span></div><div class='line' id='LC75'>			<span class="k">return</span> <span class="kc">true</span><span class="o">;</span></div><div class='line' id='LC76'>		<span class="k">return</span> <span class="kc">false</span><span class="o">;</span></div><div class='line' id='LC77'>	<span class="o">}</span></div><div class='line' id='LC78'>	<span class="cm">/**</span></div><div class='line' id='LC79'><span class="cm">	 * checks if a tag indicates plurality</span></div><div class='line' id='LC80'><span class="cm">	 * @param tag</span></div><div class='line' id='LC81'><span class="cm">	 * @return true if the tag is plural, false otherwise</span></div><div class='line' id='LC82'><span class="cm">	 */</span></div><div class='line' id='LC83'>	<span class="kd">public</span> <span class="kd">static</span> <span class="kt">boolean</span> <span class="nf">tagIsPluralNoun</span><span class="o">(</span><span class="n">String</span> <span class="n">tag</span><span class="o">){</span></div><div class='line' id='LC84'>		<span class="k">if</span><span class="o">(</span><span class="n">tag</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;NNS&quot;</span><span class="o">)</span> <span class="o">||</span> <span class="n">tag</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;NNPS&quot;</span><span class="o">)){</span></div><div class='line' id='LC85'>			<span class="k">return</span> <span class="kc">true</span><span class="o">;</span></div><div class='line' id='LC86'>		<span class="o">}</span></div><div class='line' id='LC87'>		<span class="k">return</span> <span class="kc">false</span><span class="o">;</span></div><div class='line' id='LC88'>	<span class="o">}</span></div><div class='line' id='LC89'><br/></div><div class='line' id='LC90'>	<span class="cm">/**</span></div><div class='line' id='LC91'><span class="cm">	 * Does a full parse of the sentence</span></div><div class='line' id='LC92'><span class="cm">	 * Returns if the main verb is 3rd person, not 3rd person, or cannot be determined</span></div><div class='line' id='LC93'><span class="cm">	 */</span></div><div class='line' id='LC94'>	<span class="kd">public</span> <span class="kd">static</span> <span class="n">String</span> <span class="nf">parseVerbs</span><span class="o">(</span><span class="n">String</span> <span class="n">sentence</span><span class="o">)</span></div><div class='line' id='LC95'>	<span class="o">{</span></div><div class='line' id='LC96'>		<span class="n">PERSON</span> <span class="n">person</span> <span class="o">=</span> <span class="n">PERSON</span><span class="o">.</span><span class="na">DONTKNOW</span><span class="o">;</span></div><div class='line' id='LC97'>		<span class="n">Tree</span> <span class="n">parsed</span> <span class="o">=</span> <span class="n">lp</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">sentence</span><span class="o">);</span></div><div class='line' id='LC98'>		<span class="k">for</span><span class="o">(</span><span class="n">Tree</span> <span class="nl">t:</span> <span class="n">parsed</span><span class="o">.</span><span class="na">preOrderNodeList</span><span class="o">())</span>	                </div><div class='line' id='LC99'>		<span class="o">{</span></div><div class='line' id='LC100'>			<span class="k">if</span><span class="o">((</span><span class="n">t</span><span class="o">.</span><span class="na">label</span><span class="o">().</span><span class="na">value</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;VBP&quot;</span><span class="o">)))</span></div><div class='line' id='LC101'>			<span class="o">{</span></div><div class='line' id='LC102'>				<span class="n">person</span> <span class="o">=</span> <span class="n">PERSON</span><span class="o">.</span><span class="na">NOTTHIRD</span><span class="o">;</span></div><div class='line' id='LC103'>			<span class="o">}</span></div><div class='line' id='LC104'>			<span class="k">if</span><span class="o">(</span><span class="n">t</span><span class="o">.</span><span class="na">label</span><span class="o">().</span><span class="na">value</span><span class="o">().</span><span class="na">equals</span><span class="o">(</span><span class="s">&quot;VBZ&quot;</span><span class="o">))</span></div><div class='line' id='LC105'>			<span class="o">{</span></div><div class='line' id='LC106'>				<span class="n">person</span> <span class="o">=</span> <span class="n">PERSON</span><span class="o">.</span><span class="na">THIRD</span><span class="o">;</span></div><div class='line' id='LC107'>			<span class="o">}</span></div><div class='line' id='LC108'>		<span class="o">}</span></div><div class='line' id='LC109'>		<span class="k">return</span> <span class="n">person</span><span class="o">.</span><span class="na">toString</span><span class="o">();</span></div><div class='line' id='LC110'>	<span class="o">}</span></div><div class='line' id='LC111'><span class="o">}</span></div></pre></div>
+                <div class="highlight"><pre><div class='line' id='LC1'><br/></div><div class='line' id='LC2'><span class="kd">public</span> <span class="kd">class</span> <span class="nc">FeatureGenerator</span> <span class="o">{</span></div><div class='line' id='LC3'><br/></div><div class='line' id='LC4'><span class="o">}</span></div></pre></div>
           </td>
         </tr>
       </table>
@@ -583,7 +492,7 @@
       <hr class="footer-divider">
 
 
-    <p class="right">&copy; 2012 <span title="0.12146s from fe2.rs.github.com">GitHub</span> Inc. All rights reserved.</p>
+    <p class="right">&copy; 2012 <span title="0.06630s from fe2.rs.github.com">GitHub</span> Inc. All rights reserved.</p>
     <a class="left" href="https://github.com/">
       <span class="mega-icon mega-icon-invertocat"></span>
     </a>
@@ -978,7 +887,7 @@ I think you should use an
 
     
     
-    <span id='server_response_time' data-time='0.12270' data-host='fe2'></span>
+    <span id='server_response_time' data-time='0.06763' data-host='fe2'></span>
     
   </body>
 </html>
