@@ -398,6 +398,7 @@ public class PreProcessing {
 		public NounPhrase createNP(Tree npTree, AbstractSequenceClassifier classifier, Dictionaries d){
 			//extract pos tags
 			NounPhrase temp = new NounPhrase();//a new nounphrase cadidate
+			
 			for(Tree t : npTree){
 				if(t.isPreTerminal()){//checks if the noun phrase tree is the parent of some leaves
 					for(Tree leaf :t.getLeaves()){//get all the leaves of the parent node
@@ -472,6 +473,5 @@ public class PreProcessing {
 							returnTrees.add(t);
 			}
 			return returnTrees;
-
 		}
 }

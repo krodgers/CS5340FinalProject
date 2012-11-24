@@ -28,7 +28,7 @@ public class StringMatcher {
 					for(NounPhrase.NamedEntity cre: corefNEList){
 						//for each named entity in the coref and candidate's list. check to see if thier phrases match.
 						if(ce.phrase.equals(cre.phrase) && ce.classification == cre.classification){
-									return 2;
+									return 1;
 						}
 					}
 				}
@@ -71,7 +71,7 @@ public class StringMatcher {
 		String candHead = candidate.getHeadPhrase();
 		String corefHead = coref.getHeadPhrase();
 		if(candHead.equals(corefHead))
-			return 2;
+			return 1;
 		if(candidate.getHeadPhrase().contains(coref.getHeadPhrase()))
 			return 1;
 		return 0;
@@ -82,7 +82,7 @@ public class StringMatcher {
 		String corefPhrase = candidate.getPhrase();
 		if(candPhrase.contains(corefPhrase))
 			if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) < 4){
-				return 2;
+				return 1;
 			}
 			else
 				return 1;
@@ -94,7 +94,7 @@ public class StringMatcher {
 		String candPhrase = candidate.getPhrase();
 		String corefPhrase = candidate.getPhrase();
 		if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) <= 8){
-			return 2;
+			return 1;
 		}
 		else
 			return 0;

@@ -129,8 +129,10 @@ public class coreference {
 				}				
 				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
+					if(np != null){
 					nounPhraseMap.put(np.getPhrase(), np);
 					nounPhrasesList.add(np);
+					}
 				}
 
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
@@ -146,11 +148,11 @@ public class coreference {
 					idCounter++;
 				}
 
-				Hobb h = new Hobb();
-				if(corefNP.hasPronoun())
-				{
-					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
-				}
+//				Hobb h = new Hobb();
+//				if(corefNP.hasPronoun())
+//				{
+//					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
+//				}
 				nounPhrasesList.add(corefNP);
 				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
 
