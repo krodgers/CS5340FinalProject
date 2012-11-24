@@ -44,6 +44,8 @@ public class Hobb {
 			// Start in same sentence as coref; search R-> L
 			for(int i = npList.size() - 1; i >= 0; i--)
 			{
+				if(npList.get(i)== null)
+					continue;
 				findGender(NPList.get(npList.get(i)));
 				matched = scoreNP(corefNP, NPList.get(npList.get(i)));
 				if(matched)
@@ -98,6 +100,8 @@ public class Hobb {
 			nounPhrase.setGender(NounPhrase.Gender.FEMALE);
 		else if(d.malePronouns.contains(nounPhrase.getHeadPhrase()))
 		nounPhrase.setGender(NounPhrase.Gender.MALE);
+		else
+			nounPhrase.setGender(NounPhrase.Gender.NONE);
 	}
 
 	/**
@@ -108,7 +112,7 @@ public class Hobb {
 	private NounPhrase createNP(Tree npTree) {
 		NounPhrase temp = new NounPhrase();//a new nounphrase cadidate
 		for(Tree t : npTree){
-			if(t.isPreTerminal()){//checks if the noun phrase tree is the parent of some leaves
+			if(t.isPhrasal()){//checks if the noun phrase tree is the parent of some leaves
 				for(Tree leaf :t.getLeaves()){//get all the leaves of the parent node
 					if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
 						temp.addToPhrase(leaf.value(), t.value());
