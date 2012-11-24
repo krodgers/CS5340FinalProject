@@ -46,14 +46,14 @@ public class parserUtil {
 	public static ArrayList<Tree> fullParse(String sentence)
 	{
 		ArrayList<Tree> nounPhrases = new ArrayList<Tree>();
-		Options bob = new Options();
+		
 		Tree parsed = lp.apply(sentence);
 		Tree domnp = null;
 		for(Tree t: parsed.preOrderNodeList())	                
 		{
 			if(t.isPhrasal())
 			{
-				if((t.label().value().equals("NP") && domnp==null) || (t.label().value().equals("NP") && !domnp.dominates(t)))
+				if(((t.label().value().equals("NP") && domnp==null) || (t.label().value().equals("NP") && !domnp.dominates(t))) && !t.pennString().contains("VP"))
 				{
 					domnp = t;
 					nounPhrases.add(t);

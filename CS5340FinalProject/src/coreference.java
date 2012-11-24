@@ -114,11 +114,16 @@ public class coreference {
 				ArrayList<NounPhrase> fullNPs = new ArrayList<NounPhrase>();//this is a temp list that contains all new noun phrases in the current chunk
 				for(String sent : unProcSentences){
 					//parse the sentence
-					NounPhrase nounPhrase;
-					
-					if((nounPhrase = extractNounPhrase(sent, classifier, processor)) != null){
+					/**
+					 * Sometimes the sentence contains more than one NP. 
+					 * I hope you don't me rewriting this... :?
+					 */
+					ArrayList<NounPhrase> nounPhrase = new ArrayList<NounPhrase>();
+					if((nounPhrase = extractNounPhrase(sent, classifier, processor)).size() != 0)
+					{
 						//if the extractNounphrase returns null then no noun phrase was found in the current tree and should not be added 
-						fullNPs.add(nounPhrase);
+						for(NounPhrase n : nounPhrase)
+							fullNPs.add(n);
 					}
 					/*fullNPs.addAll(extractSplitNounPhrases(sent, classifier, processor));*/
 				}				
@@ -141,11 +146,11 @@ public class coreference {
 					idCounter++;
 				}
 				
-//				Hobb h = new Hobb();
-//				if(corefNP.hasPronoun())
-//				{
-//					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
-//				}
+				Hobb h = new Hobb();
+				if(corefNP.hasPronoun())
+				{
+					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
+				}
 				nounPhrasesList.add(corefNP);
 				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
 				
@@ -161,17 +166,17 @@ public class coreference {
 
 	}
 	
-	private static NounPhrase extractNounPhrase(String sent,
-			CRFClassifier classifier, PreProcessing processor) {
+	private static ArrayList<NounPhrase> extractNounPhrase(String sent, CRFClassifier classifier, PreProcessing processor) {
 		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
+		ArrayList<NounPhrase> addCandidate = new ArrayList<NounPhrase>();
 		for(Tree t : npTrees){
 			//call the createNP method in PreProcessing.java file which will extract the Noun phrases
 			//from the np tree and populate the features of each extracted nounphrase
-			NounPhrase addCandidate = processor.createNP(t, classifier, d);
-			return addCandidate;
+			addCandidate.add(processor.createNP(t, classifier, d));
+			
 		}
-		return null;
+		return addCandidate;
 	}
 	
 	private static ArrayList<NounPhrase> extractSplitNounPhrases(String sent,
