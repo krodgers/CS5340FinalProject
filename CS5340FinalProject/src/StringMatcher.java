@@ -28,7 +28,7 @@ public class StringMatcher {
 					for(NounPhrase.NamedEntity cre: corefNEList){
 						//for each named entity in the coref and candidate's list. check to see if thier phrases match.
 						if(ce.phrase.equals(cre.phrase) && ce.classification == cre.classification){
-									return 1;
+									return 2;
 						}
 					}
 				}
@@ -47,7 +47,7 @@ public class StringMatcher {
 		for(String c : candidate.getHeadPhrase().split(" "))
 			for(String cr : coref.getHeadPhrase().split(" ")){
 				if(c.toLowerCase().trim().equals(cr.toLowerCase().trim()))
-					return 1;				
+					return 2;				
 			}
 		for(String c : candidate.getHeadPhrase().split(" "))
 			for(String cr : coref.getHeadPhrase().split(" ")){
@@ -71,9 +71,9 @@ public class StringMatcher {
 		String candHead = candidate.getHeadPhrase();
 		String corefHead = coref.getHeadPhrase();
 		if(candHead.equals(corefHead))
-			return 1;
+			return 2;
 		if(candidate.getHeadPhrase().contains(coref.getHeadPhrase()))
-			return 1;
+			return 2;
 		return 0;
 	}
 
@@ -82,7 +82,7 @@ public class StringMatcher {
 		String corefPhrase = candidate.getPhrase();
 		if(candPhrase.contains(corefPhrase))
 			if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) < 4){
-				return 1;
+				return 2;
 			}
 			else
 				return 1;
@@ -125,6 +125,9 @@ public class StringMatcher {
 			score += matchNE(candidate, coref);
 			score += containsStringMatch(candidate, coref);
 			score += partialHeadMatch(candidate, coref);
+			score += (candidate.getArticle() == coref.getArticle()) ? 1 : 0;
+			if((coref.getGender() == candidate.getGender()) && (coref.isPlural() == candidate.isPlural()))
+				score += 1;
 			if(score > bestScore){
 				bestIndex = i;
 				bestScore = score;
@@ -186,15 +189,16 @@ public class StringMatcher {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
 			bw.write("<TXT>");
 			String res = "";
+			String regex = "\\/";
 			for(NounPhrase n : list)
 			{
 				if(n.getId() != null)
 				{
 
 					if(n.getRef() != null)
-						res = "<COREF ID=\"" + n.getId() + "\" REF=\"" + n.getRef() + "\"> " + n.getPhrase() + "</COREF>";
+						res = "<COREF ID=\"" + n.getId() + "\" REF=\"" + n.getRef() + "\">" + n.getPhrase().replaceAll(regex, "") + "</COREF>";
 					else
-						res = "<COREF ID=\"" + n.getId() + "\"> " + n.getPhrase() + "</COREF> ";
+						res = "<COREF ID=\"" + n.getId() + "\">" + n.getPhrase().replaceAll(regex, "") + "</COREF> ";
 					bw.write(res, 0, res.length());
 				}	
 

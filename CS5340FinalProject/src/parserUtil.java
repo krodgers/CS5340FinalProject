@@ -63,6 +63,27 @@ public class parserUtil {
 
 		return nounPhrases;
 	}
+	
+	/**
+	 * this will check if a phrase is definite or indefinite
+	 * @param posTags
+	 * @param phrase
+	 * @return Definite if current phrase contains "the"; indefinite contains "a", "an"; else none 
+	 */
+	public static NounPhrase.Article CheckForArticle(ArrayList<String> posTags, ArrayList<String> phrase){
+		for(int i = 0; i < posTags.size(); i++){
+			String currPos = posTags.get(i);
+			if(currPos.toLowerCase().equals("dt")){
+				String currPhrase = phrase.get(i).trim().toLowerCase();
+				if(currPhrase.equals("a")||currPhrase.equals("an"))
+					return NounPhrase.Article.INDEFINITE;
+				else if(currPhrase.equals("the"))
+					return NounPhrase.Article.DEFINITE;
+			}
+		
+		}
+		return NounPhrase.Article.NONE;
+	}
 
 	/**
 	 * checks if a tag is a nounphrase

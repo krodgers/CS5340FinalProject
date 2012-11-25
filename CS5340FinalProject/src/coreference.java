@@ -84,9 +84,11 @@ public class coreference {
 			/**
 			 * This part is experimental.  
 			 */
+			String docChunk = "";
 			for(int i = 0; i < Array.getLength(corefSplit); i++)
 			{
 				String currChunk = corefSplit[i];
+				
 				if(!currChunk.contains("<COREF ID="))
 					continue;
 				int startIdx = currChunk.indexOf(">");
@@ -130,35 +132,38 @@ public class coreference {
 				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
 					if(np != null){
-					nounPhraseMap.put(np.getPhrase(), np);
-					nounPhrasesList.add(np);
+						nounPhraseMap.put("X"+idCounter, np);
+						nounPhrasesList.add(np);
 					}
 				}
 
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
 				//matcher.setList(n);
 				//matcher.setCoref(corefNP);
-
-
-				//processor.test();
 				int matchId = -1;
 				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
 				if(matchId > -1){
 					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
 					idCounter++;
+				}else{//the following three lines will match the coref to the closest nounphrase
+						if(nounPhrasesList.size() > 0){
+						StringMatcher.CreateMatch(nounPhrasesList.size()-1, nounPhrasesList, corefNP, idCounter);
+						idCounter++;
+					}
 				}
-
-//				Hobb h = new Hobb();
-//				if(corefNP.hasPronoun())
-//				{
-//					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
-//				}
-				nounPhrasesList.add(corefNP);
-				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
+				//begin hobbs
+				Hobb h = new Hobb();
+				if(corefNP.hasPronoun())
+				{
+					h.runHobbs(corefNP, docChunk,  nounPhraseMap, classifier, d);
+				}
+				docChunk += corefNP.getPhrase();
+				nounPhrasesList.add(corefNP);//add coref to noun phrase lists
+				nounPhraseMap.put("X"+idCounter, corefNP);
 
 			}
 			StringMatcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir, nounPhrasesList);
-			idCounter = 1;
+			idCounter = 0;
 			nounPhrasesList.clear();
 			nounPhraseMap.clear();
 			sentences.clear();
@@ -175,8 +180,9 @@ public class coreference {
 		for(Tree t : npTrees){
 			//call the createNP method in PreProcessing.java file which will extract the Noun phrases
 			//from the np tree and populate the features of each extracted nounphrase
-			addCandidate.add(processor.createNP(t, classifier, d));
-
+		for(Tree child:t.getChildrenAsList())
+				if(child.isPhrasal())
+					addCandidate.add(processor.createNP(t, classifier, d));			
 		}
 		return addCandidate;
 	}
@@ -201,7 +207,7 @@ public class coreference {
 	}
 
 	private static NounPhrase NPcreateCorefNP(String currentCoref, String idNum, PreProcessing processor, CRFClassifier classifier) {
-		NounPhrase corefNP;//this is the nounphrase object that will contain the coref
+		NounPhrase corefNP = null;//this is the nounphrase object that will contain the coref
 		if(currentCoref.contains(">"))
 			currentCoref = currentCoref.replace(">", "");
 		//take the current coref and run a full parse on it
@@ -218,7 +224,8 @@ public class coreference {
 		Tree corefTree = corefNPTree.get(0);
 		//create
 		corefNP = processor.createNP(corefTree, classifier, d);
-		corefNP.setId(idNum);
+		if(corefNP != null)
+			corefNP.setId(idNum);
 		return corefNP;
 	}
 

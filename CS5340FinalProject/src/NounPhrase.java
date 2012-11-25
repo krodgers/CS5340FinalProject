@@ -3,8 +3,9 @@ import java.util.ArrayList;
 public class NounPhrase {
 
 	public enum Classification { NONE, PERSON, ORGANIZATION, LOCATION, MISC, PERCENT, MONEY, DATE, TIME };
-	public enum Gender {NONE, MALE, FEMALE};
+	public enum Gender {NONE, MALE, FEMALE, NEUTER};
 	public enum Person {FIRST, SECOND, THIRD};
+	public enum Article {DEFINITE, INDEFINITE, NONE};//IF ART = A, an => indefinite. //if Art = the =>definite
 	private String id;  // from <Coref id = ""
 	//private String phrase; // <Coref > phrase </Coref>
 	private String ref; // from <Coref ref = ""
@@ -20,10 +21,11 @@ public class NounPhrase {
 	private String headPhrase;
 	private String pronoun;
 	private boolean isCountry;
-
+	private Article article;
 
 
 	public NounPhrase() {
+		article = Article.NONE;
 		pronoun = null;
 		isCountry = false;
 		headPhrase = null;
@@ -63,7 +65,7 @@ public class NounPhrase {
 			for(int i = 1; i < phrase.size(); i++){
 				returnPhrase += " " + phrase.get(i);
 			}
-
+			
 			return returnPhrase.trim();
 		}
 		return null;
@@ -189,6 +191,12 @@ public class NounPhrase {
 	}
 	public void setHeadPhrase(String s){
 		headPhrase = s;
+	}
+	public void setArticle(Article art){
+		this.article = art;
+	}
+	public Article getArticle(){
+		return article;
 	}
 
 }
