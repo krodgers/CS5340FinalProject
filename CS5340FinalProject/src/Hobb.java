@@ -20,6 +20,8 @@ public class Hobb {
 	 */
 	public boolean runHobbs(NounPhrase corefNP, String context, HashMap<String, NounPhrase> NPList)
 	{
+		if(context.isEmpty())
+			return false;
 		//Split sentences
 		//String sentence = "The castle in Camelot remained the residence of the king until 536 when he moved it to London. The king of London is highly esteemed.";
 		PreProcessing processor = new PreProcessing();
@@ -29,13 +31,14 @@ public class Hobb {
 		ArrayList<String> npList = new ArrayList<String>();
 		ArrayList<Tree> parsedNP;
 		boolean matched = false;
-		
+
 		// Parse the sentence
 		parsedNP = parserUtil.fullParse(sents.get(sents.size() - 1));
-		if(parsedNP != null)
+		// Find Gender info about coref
+		findGender(corefNP);
+		findPlurality(corefNP);
+		if(parsedNP != null && sents.size() > 1)
 		{
-			// Find Gender info about coref
-			findGender(corefNP);
 			// Get the NPs out of the sentence
 			for(Tree t : parsedNP)
 			{
@@ -51,28 +54,48 @@ public class Hobb {
 				if(matched)
 					return true;
 			}
-		}
-		// Iterate over the other sentences
-		for(int x = sents.size() - 2; x >= 0; x--)
-		{
-			npList.clear();
-			parsedNP = parserUtil.fullParse(sents.get(x));
-			if(parsedNP != null)
+			// Iterate over the other sentences
+			for(int x = sents.size() - 2; x >= 0; x--)
 			{
-				for(Tree t: parsedNP)
+				npList.clear();
+				parsedNP = parserUtil.fullParse(sents.get(x));
+				if(parsedNP != null)
 				{
-					npList.add(t.getLeaves().toString());
-				}
-				for(int i = 0; i < npList.size(); i++)
-				{
-					matched = scoreNP(corefNP, NPList.get(npList.get(i)));
-					if(matched)
-						return true;
+					for(Tree t: parsedNP)
+					{
+						npList.add(createNP(t).getPhrase());
+					}
+					for(int i = 0; i < npList.size(); i++)
+					{
+						matched = scoreNP(corefNP, NPList.get(npList.get(i)));
+						if(matched)
+							return true;
+					}
 				}
 			}
-			
 		}
-
+		else
+		{
+			// Iterate over the other sentences
+			for(int x = sents.size() - 1; x >= 0; x--)
+			{
+				npList.clear();
+				parsedNP = parserUtil.fullParse(sents.get(x));
+				if(parsedNP != null)
+				{
+					for(Tree t: parsedNP)
+					{
+						npList.add(createNP(t).getPhrase());
+					}
+					for(int i = 0; i < npList.size(); i++)
+					{
+						matched = scoreNP(corefNP, NPList.get(npList.get(i)));
+						if(matched)
+							return true;
+					}
+				}
+			}
+		}
 		/**
 		 * noun groups are searched in the following order: 
 			In current sentence, R->L, starting from L of PRO
@@ -86,11 +109,22 @@ public class Hobb {
 	}
 	
 	
+	private void findPlurality(NounPhrase corefNP) {
+		Dictionaries d = new Dictionaries();
+		if(d.pluralPronouns.contains(corefNP.getHeadPhrase()))
+			corefNP.setPlural(true);
+		else
+			corefNP.setPlural(false);
+	}
+
+
 	/**
 	 * Assigns a gender to the noun phrase
 	 * @param corefNP
 	 */
 	private void findGender(NounPhrase nounPhrase) {
+		if(nounPhrase == null)
+			return;
 		Dictionaries d = new Dictionaries();
 		if(d.femaleWords.contains(nounPhrase.getHeadPhrase()))
 				nounPhrase.setGender(NounPhrase.Gender.FEMALE);
@@ -140,8 +174,13 @@ public class Hobb {
 		{
 			return false;
 		}
+		Dictionaries d = new Dictionaries();
 		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
 		{
+			if(coref.getPerson() != NounPhrase.Person.THIRD && (coref.getPerson() != otherNP.getPerson()))
+				return false;
+			if(d.animatePronouns.contains(coref.getHeadPhrase()) && d.inanimateWords.contains(otherNP.getHeadPhrase()))
+				return false;
 			if(otherNP.getId() == null)
 			{
 				otherNP.setId("X"+coreference.idCounter);
@@ -153,25 +192,24 @@ public class Hobb {
 				coref.setRef(otherNP.getId());
 			}
 			return true;
+
 		}
-			
+
 		return false;
 	}
-		
-	/** Takes an array and creates a string
-	 * So {the,dog,ran} would be "the dog ran "
-	 */
-	private String arrayToString(String[] strings) {
-		String result = "";
-		for(String s : strings)
+	
+
+	private String arrayToString(ArrayList<String> list)
+	{
+		String temp = "";
+		for(String s : list)
 		{
-			result += s + " ";
+			temp += s + " ";
 		}
-		return result;
+		return temp.trim();
 	}
-
-	// 
-
+		
 }
+
 
 

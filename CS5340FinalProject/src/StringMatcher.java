@@ -194,7 +194,7 @@ public class StringMatcher {
 					if(n.getRef() != null)
 						res = "<COREF ID=\"" + n.getId() + "\" REF=\"" + n.getRef() + "\"> " + n.getPhrase() + "</COREF>";
 					else
-						res = "<COREF ID=\"" + n.getId() + "\"> " + n.getPhrase() + "</COREF> ";
+						res = "<COREF ID=\"" + n.getId() + "\"> " + n.getPhrase() + "</COREF>";
 					bw.write(res, 0, res.length());
 				}	
 				

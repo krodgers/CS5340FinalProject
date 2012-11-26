@@ -159,9 +159,7 @@ public class coreference {
 			idCounter = 1;
 			nounPhrasesList.clear();
 			nounPhraseMap.clear();
-			sentences.clear();
-			
-		
+				
 		}	
 
 	}
@@ -170,10 +168,12 @@ public class coreference {
 		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
 		ArrayList<NounPhrase> addCandidate = new ArrayList<NounPhrase>();
+		NounPhrase np;
 		for(Tree t : npTrees){
 			//call the createNP method in PreProcessing.java file which will extract the Noun phrases
 			//from the np tree and populate the features of each extracted nounphrase
-			addCandidate.add(processor.createNP(t, classifier, d));
+			if((np = processor.createNP(t,classifier,d)) != null)
+				addCandidate.add(np);
 			
 		}
 		return addCandidate;

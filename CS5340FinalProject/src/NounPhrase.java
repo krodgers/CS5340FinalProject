@@ -190,5 +190,10 @@ public class NounPhrase {
 	public void setHeadPhrase(String s){
 		headPhrase = s;
 	}
+	@Override
+	public String toString()
+	{
+		return this.phrase + " ";
+	}
 	
 }
