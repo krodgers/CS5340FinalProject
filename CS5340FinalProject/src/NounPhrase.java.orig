@@ -216,4 +216,13 @@ public class NounPhrase {
 	public boolean refFullHeadMatch(){
 		return refFullHeadMatch;
 	}
+<<<<<<< HEAD
+	@Override
+	public String toString()
+	{
+		return this.phrase + " ";
+	}
 }
+=======
+}
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8

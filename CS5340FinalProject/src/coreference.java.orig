@@ -152,9 +152,15 @@ public class coreference {
 				for(NounPhrase np: fullNPs){
 					if(np != null){
 						nounPhraseMap.put("X"+idCounter, np);
+<<<<<<< HEAD
 					nounPhrasesList.add(np);
 				}
 				}
+=======
+						nounPhrasesList.add(np);
+					}
+				}
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
 				//matcher.setList(n);
@@ -165,11 +171,37 @@ public class coreference {
 					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
 					idCounter++;
 				}//else{//the following three lines will match the coref to the closest nounphrase
+<<<<<<< HEAD
 				
 				if(corefNP.hasPronoun() && nounPhrasesList.size() > 0){
 						StringMatcher.CreateMatch(nounPhrasesList.size()-1, nounPhrasesList, corefNP, idCounter);
 						idCounter++;
+				Hobb h = new Hobb();
+				if(corefNP.hasPronoun()&& (corefNP.getRef() != null))
+				{
+					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
+				}
+				nounPhrasesList.add(corefNP);
+				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
 				
+=======
+						
+				if(corefNP.hasPronoun() && nounPhrasesList.size() > 0){
+						StringMatcher.CreateMatch(nounPhrasesList.size()-1, nounPhrasesList, corefNP, idCounter);
+						idCounter++;
+					
+				}
+//				//begin hobbs
+//				Hobb h = new Hobb();
+//				if(corefNP.hasPronoun())
+//				{
+//					h.runHobbs(corefNP, docChunk,  nounPhraseMap, classifier, d);
+//				}
+				docChunk += corefNP.getPhrase();
+				nounPhrasesList.add(corefNP);//add coref to noun phrase lists
+				nounPhraseMap.put("X"+idCounter, corefNP);
+
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 			}
 //				//begin hobbs
 //				Hobb h = new Hobb();
@@ -186,6 +218,10 @@ public class coreference {
 			idCounter = 0;
 			nounPhrasesList.clear();
 			nounPhraseMap.clear();
+<<<<<<< HEAD
+=======
+			sentences.clear();
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 
 
 		}	
@@ -248,7 +284,11 @@ public class coreference {
 		//create
 		corefNP = processor.createNP(corefTree, classifier, d);
 		if(corefNP != null)
+<<<<<<< HEAD
 		corefNP.setId(idNum);
+=======
+			corefNP.setId(idNum);
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 		return corefNP;
 	}
 

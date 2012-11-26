@@ -42,7 +42,7 @@ public class Hobb {
 		//Do full parse of sentences
 		//Get the NP in order
 		ArrayList<String> npList = new ArrayList<String>();
-		ArrayList<Tree> parsedNP = null;
+<<<<<<< HEAD
 		boolean matched = false;
 
 		// Find Gender info about coref
@@ -52,6 +52,23 @@ public class Hobb {
 		{
 			// Parse the sentence
 			findNPS(sents.get(sents.size()-1), npList);
+=======
+		ArrayList<Tree> parsedNP = null;
+		boolean matched = false;
+
+		// Parse the sentence
+		if(sents.size() >0)
+		parsedNP = parserUtil.fullParse(sents.get(sents.size() - 1));
+		if(parsedNP != null)
+		{
+			// Find Gender info about coref
+			findGender(corefNP, d);
+			// Get the NPs out of the sentence
+			for(Tree t : parsedNP)
+			{
+				npList.add(processor.createNP(t, classifier, d).getPhrase());
+			}
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 //			// Start in same sentence as coref; search R-> L
 //			for(int i = npList.size() - 1; i >= 0; i--)
 //			{
@@ -94,6 +111,10 @@ public class Hobb {
 						return true;
 				}
 			}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 		}
 		/**
 		 * noun groups are searched in the following order: 
@@ -102,6 +123,7 @@ public class Hobb {
 			In S-2, L->R
 			In current sentence, L->R, starting from R of PRO
 		 */
+<<<<<<< HEAD
 		return false;
 	}
 	
@@ -123,6 +145,12 @@ public class Hobb {
 		else
 			corefNP.setPlural(false);
 	}
+=======
+
+
+		return false;
+	}
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 
 
 	/**
@@ -139,7 +167,11 @@ public class Hobb {
 		else if(d.femalePronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()))
 			nounPhrase.setGender(NounPhrase.Gender.FEMALE);
 		else if(d.malePronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()))
+<<<<<<< HEAD
 		nounPhrase.setGender(NounPhrase.Gender.MALE);
+=======
+			nounPhrase.setGender(NounPhrase.Gender.MALE);
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 		else if(d.personPronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()) || d.animatePronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()) || d.personPronouns.contains(nounPhrase.getHeadPhrase()) || d.firstPersonPronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()))
 				nounPhrase.setGender(NounPhrase.Gender.NEUTER);
 		else
@@ -182,7 +214,12 @@ public class Hobb {
 		{
 			return false;
 		}
-				if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
+<<<<<<< HEAD
+		Dictionaries d = new Dictionaries();
+		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
+=======
+		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural() && (coref.getPerson() == otherNP.getPerson())))
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
 		{
 			if(coref.getPerson() != NounPhrase.Person.THIRD && (coref.getPerson() != otherNP.getPerson()))
 				return false;
@@ -204,8 +241,28 @@ public class Hobb {
 
 		return false;
 	}
+<<<<<<< HEAD
 
+		
 }
 
 
 
+=======
+
+	/** Takes an array and creates a string
+	 * So {the,dog,ran} would be "the dog ran "
+	 */
+	private String arrayToString(String[] strings) {
+		String result = "";
+		for(String s : strings)
+		{
+			result += s + " ";
+		}
+		return result;
+	}
+
+	// 
+
+}
+>>>>>>> 63ae46dc0362ad274abd8f4df4524b883d469da8
