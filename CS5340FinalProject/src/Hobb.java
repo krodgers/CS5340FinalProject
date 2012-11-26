@@ -9,7 +9,6 @@ import java.util.HashMap;
 
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.dcoref.Dictionaries;
-import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 public class Hobb {
 
 	private static Dictionaries d;
@@ -31,7 +30,7 @@ public class Hobb {
 	 * @param NPList		the map of the featurized nounphrases
 	 * @return
 	 */
-	public boolean runHobbs(NounPhrase corefNP, String context, HashMap<String, NounPhrase> NPList,	AbstractSequenceClassifier classifier, Dictionaries d)
+	public boolean runHobbs(NounPhrase corefNP, String context, HashMap<String, NounPhrase> NPList)
 	{
 		if(context.isEmpty())
 			return false;
@@ -42,28 +41,22 @@ public class Hobb {
 		//Do full parse of sentences
 		//Get the NP in order
 		ArrayList<String> npList = new ArrayList<String>();
-		ArrayList<Tree> parsedNP = null;
 		boolean matched = false;
 
 		// Find Gender info about coref
-			findGender(corefNP, d);
+		findGender(corefNP);
 		findPlurality(corefNP);
 		if(sents.size() > 1)
 		{
 			// Parse the sentence
 			findNPS(sents.get(sents.size()-1), npList);
-//			// Start in same sentence as coref; search R-> L
-//			for(int i = npList.size() - 1; i >= 0; i--)
-//			{
-//				if(npList.get(i)== null)
-//					continue;
-//				findGender(NPList.get(npList.get(i)), d);
-//				matched = scoreNP(corefNP, NPList.get(npList.get(i)));
-//				if(matched)
-//					return true;
-//			}
-			for(int i = NPList.size()-1; i <= 0; i++){
-				matched = scoreNP(corefNP, NPList.get("X"+i));
+			// Start in same sentence as coref; search R-> L
+			for(int i = npList.size() - 1; i >= 0; i--)
+			{
+				if(npList.get(i)== null)
+					continue;
+				findGender(NPList.get(npList.get(i)));
+				matched = scoreNP(corefNP, NPList.get(npList.get(i)));
 				if(matched)
 					return true;
 			}
@@ -129,19 +122,17 @@ public class Hobb {
 	 * Assigns a gender to the noun phrase
 	 * @param corefNP
 	 */
-	public static void findGender(NounPhrase nounPhrase, Dictionaries d) {
+	private void findGender(NounPhrase nounPhrase) {
 		if(nounPhrase == null)
 			return;
-		if(d.femaleWords.contains(nounPhrase.getHeadPhrase().toLowerCase()))
+		if(d.femaleWords.contains(nounPhrase.getHeadPhrase()))
 				nounPhrase.setGender(NounPhrase.Gender.FEMALE);
-		else if(d.maleWords.contains(nounPhrase.getHeadPhrase().toLowerCase()))
+		else if(d.maleWords.contains(nounPhrase.getHeadPhrase()))
 			nounPhrase.setGender(NounPhrase.Gender.MALE);
-		else if(d.femalePronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()))
+		else if(d.femalePronouns.contains(nounPhrase.getHeadPhrase()))
 			nounPhrase.setGender(NounPhrase.Gender.FEMALE);
-		else if(d.malePronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()))
+		else if(d.malePronouns.contains(nounPhrase.getHeadPhrase()))
 		nounPhrase.setGender(NounPhrase.Gender.MALE);
-		else if(d.personPronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()) || d.animatePronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()) || d.personPronouns.contains(nounPhrase.getHeadPhrase()) || d.firstPersonPronouns.contains(nounPhrase.getHeadPhrase().toLowerCase()))
-				nounPhrase.setGender(NounPhrase.Gender.NEUTER);
 		else
 			nounPhrase.setGender(NounPhrase.Gender.NONE);
 	}
@@ -166,11 +157,11 @@ public class Hobb {
 	//First Person
 //	I, me, my, mine, myself
 //	We, us, our, ours, ourselves
-
+	
 	//Second Person
 //	You, you, your, yours, yourself
 //	You, you, your, yours, yourselves
-
+	
 	//Third Person
 //	He, him, his, his, himself
 //	She, her, her, hers, herself
@@ -182,7 +173,8 @@ public class Hobb {
 		{
 			return false;
 		}
-				if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
+		Dictionaries d = new Dictionaries();
+		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
 		{
 			if(coref.getPerson() != NounPhrase.Person.THIRD && (coref.getPerson() != otherNP.getPerson()))
 				return false;
@@ -204,8 +196,8 @@ public class Hobb {
 
 		return false;
 	}
-
+	
+		
 }
-
 
 
