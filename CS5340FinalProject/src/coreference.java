@@ -2,9 +2,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
@@ -14,6 +18,7 @@ import edu.stanford.nlp.util.StringUtils;
 public class coreference {
 	public static Integer idCounter = 0;
 	private static Dictionaries d = new Dictionaries();
+	public static IDictionary dict;
 	/**
 	 * @param args
 	 */
@@ -28,10 +33,24 @@ public class coreference {
 		 * current label to give
 		 * 
 		 */
+		
 		String curDir = System.getProperty("user.dir");
 		//String serializedClassifier = curDir+ "/classifiers/english.all.3class.distsim.crf.ser.gz";
 		String serializedClassifier = curDir+ "/classifiers/english.conll.4class.distsim.crf.ser.gz";
-
+		String wnhome = System.getenv("WNHOME");
+		String path = wnhome + File.separator + "dict";
+		
+		URL url;
+		try {
+			url = new URL("file", null, path);
+			// construct the dictionary object and open it
+			dict = new Dictionary(url);
+			dict.open();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		ArrayList<String> sentences = new ArrayList<String>();
 		CRFClassifier classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
 		PreProcessing processor = new PreProcessing();
@@ -145,18 +164,19 @@ public class coreference {
 				if(matchId > -1){
 					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
 					idCounter++;
-				}else{//the following three lines will match the coref to the closest nounphrase
-						if(nounPhrasesList.size() > 0){
+				}//else{//the following three lines will match the coref to the closest nounphrase
+						
+				if(corefNP.hasPronoun() && nounPhrasesList.size() > 0){
 						StringMatcher.CreateMatch(nounPhrasesList.size()-1, nounPhrasesList, corefNP, idCounter);
 						idCounter++;
-					}
+					
 				}
-				//begin hobbs
-				Hobb h = new Hobb();
-				if(corefNP.hasPronoun())
-				{
-					h.runHobbs(corefNP, docChunk,  nounPhraseMap, classifier, d);
-				}
+//				//begin hobbs
+//				Hobb h = new Hobb();
+//				if(corefNP.hasPronoun())
+//				{
+//					h.runHobbs(corefNP, docChunk,  nounPhraseMap, classifier, d);
+//				}
 				docChunk += corefNP.getPhrase();
 				nounPhrasesList.add(corefNP);//add coref to noun phrase lists
 				nounPhraseMap.put("X"+idCounter, corefNP);
@@ -180,7 +200,10 @@ public class coreference {
 		for(Tree t : npTrees){
 			//call the createNP method in PreProcessing.java file which will extract the Noun phrases
 			//from the np tree and populate the features of each extracted nounphrase
-		for(Tree child:t.getChildrenAsList())
+		if(t.value().equals("NP") && t.isPrePreTerminal())
+			addCandidate.add(processor.createNP(t, classifier, d));	
+		else
+			for(Tree child:t.getChildrenAsList())
 				if(child.isPhrasal())
 					addCandidate.add(processor.createNP(t, classifier, d));			
 		}
@@ -273,6 +296,8 @@ public class coreference {
 			doc = doc.substring(0, doc.lastIndexOf("</"));
 		return doc;
 	}
+	
+	
 
 
 

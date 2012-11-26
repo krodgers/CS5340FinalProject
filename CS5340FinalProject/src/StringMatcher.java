@@ -1,5 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -70,10 +71,11 @@ public class StringMatcher {
 	public static int fullStringMatchHeads(NounPhrase candidate, NounPhrase coref){
 		String candHead = candidate.getHeadPhrase();
 		String corefHead = coref.getHeadPhrase();
-		if(candHead.equals(corefHead))
+		if(candHead.equals(corefHead)){
 			return 2;
+		}
 		if(candidate.getHeadPhrase().contains(coref.getHeadPhrase()))
-			return 2;
+			return 1;
 		return 0;
 	}
 
@@ -100,7 +102,7 @@ public class StringMatcher {
 			return 0;
 	}
 	public static int pluralityMatch(NounPhrase candidate, NounPhrase coref){
-		if((!candidate.isPlural() && !coref.isPlural()) || (candidate.isPlural() && coref.isPlural()))
+		if((candidate.isPlural() && coref.isPlural()))
 			return 1;
 		else
 			return 0;
@@ -123,11 +125,14 @@ public class StringMatcher {
 			NounPhrase candidate = list.get(i);
 			score = fullStringMatchHeads(candidate, coref);
 			score += matchNE(candidate, coref);
-			score += containsStringMatch(candidate, coref);
+			//score += containsStringMatch(candidate, coref);
 			score += partialHeadMatch(candidate, coref);
 			score += (candidate.getArticle() == coref.getArticle()) ? 1 : 0;
-			if((coref.getGender() == candidate.getGender()) && (coref.isPlural() == candidate.isPlural()))
+			if((coref.getGender() == candidate.getGender()) && (coref.isPlural() == candidate.isPlural()) && coref.getRawGender() != NounPhrase.Gender.NONE)
 				score += 1;
+			if((coref.getHeadClass() == candidate.getHeadClass()) && coref.getHeadClass() != NounPhrase.Classification.NONE)
+				score += 4;
+			//score += pluralityMatch(candidate, coref);
 			if(score > bestScore){
 				bestIndex = i;
 				bestScore = score;
@@ -162,6 +167,8 @@ public class StringMatcher {
 			String ref = "X" + idCounter;
 			match.setId(ref);
 			//set coref ref tag to the match's id
+			if(fullStringMatchHeads(list.get(matchId), coref) > 1)
+				list.get(matchId).setRefFullHeadMatch(true);
 			coref.setRef(ref);
 		}
 		else{
@@ -194,11 +201,18 @@ public class StringMatcher {
 			{
 				if(n.getId() != null)
 				{
-
-					if(n.getRef() != null)
-						res = "<COREF ID=\"" + n.getId() + "\" REF=\"" + n.getRef() + "\">" + n.getPhrase().replaceAll(regex, "") + "</COREF>";
+					String phrase = "";
+					if(n.getHeadPhrase() != null)
+						phrase = n.getHeadPhrase().replaceAll(regex, "");
 					else
-						res = "<COREF ID=\"" + n.getId() + "\">" + n.getPhrase().replaceAll(regex, "") + "</COREF> ";
+						phrase = n.getRef();
+					if(n.getRef() != null){
+						res = "<COREF ID=\"" + n.getId() + "\" REF=\"" + n.getRef() + "\">" + phrase + "</COREF>";
+					}
+					else{
+						
+							res = "<COREF ID=\"" + n.getId() + "\">" + phrase + "</COREF> ";
+					}
 					bw.write(res, 0, res.length());
 				}	
 
@@ -228,5 +242,4 @@ public class StringMatcher {
 
 		//System.out.println("");
 	}
-
-}
+	}

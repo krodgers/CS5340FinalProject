@@ -5,14 +5,15 @@ public class NounPhrase {
 	public enum Classification { NONE, PERSON, ORGANIZATION, LOCATION, MISC, PERCENT, MONEY, DATE, TIME };
 	public enum Gender {NONE, MALE, FEMALE, NEUTER};
 	public enum Person {FIRST, SECOND, THIRD};
-	public enum Article {DEFINITE, INDEFINITE, NONE};//IF ART = A, an => indefinite. //if Art = the =>definite
+	public enum Article {DEFINITE, INDEFINITE, NONE, DEMONSTRATIVE};//IF ART = A, an => indefinite. //if Art = the =>definite
 	private String id;  // from <Coref id = ""
 	//private String phrase; // <Coref > phrase </Coref>
 	private String ref; // from <Coref ref = ""
-	private Classification classification;  // NER classification
+	private Classification HeadClassification;  // NER classification
 	private Gender gender;
 	private Person person;
 	private Boolean plural;
+	private Boolean refFullHeadMatch;
 	private int sentenceID;
 	private boolean containsPronoun;
 	private ArrayList<String> posTags;
@@ -29,12 +30,13 @@ public class NounPhrase {
 		pronoun = null;
 		isCountry = false;
 		headPhrase = null;
+		refFullHeadMatch =false;
 		containsPronoun = false;
 		phrase = new ArrayList<String>();
 		posTags = new ArrayList<String>();
 		id = null;
 		ref = null;
-		classification = Classification.NONE;
+		HeadClassification = Classification.NONE;
 		person = Person.THIRD;
 		 gender  = Gender.NONE;
 		 plural = null;
@@ -163,6 +165,9 @@ public class NounPhrase {
 
 		return this.gender.toString();
 	}
+	public Gender getRawGender(){
+		return gender;
+	}
 	public void setGender(Gender g)
 	{
 		this.gender = g;
@@ -199,4 +204,16 @@ public class NounPhrase {
 		return article;
 	}
 
+	public Classification getHeadClass(){
+		return HeadClassification;
+	}
+	public void setHeadClassification(NounPhrase.Classification classify){
+		HeadClassification = classify;
+	}
+	public void setRefFullHeadMatch(Boolean res){
+		refFullHeadMatch = res;
+	}
+	public boolean refFullHeadMatch(){
+		return refFullHeadMatch;
+	}
 }

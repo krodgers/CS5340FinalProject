@@ -24,6 +24,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
+import edu.mit.jwi.IDictionary;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.trees.CollinsHeadFinder;
@@ -301,6 +302,7 @@ public class PreProcessing {
 	 * @param classification
 	 */
 	private void setNE(String classification, NounPhrase np) {
+		Dictionaries d = new Dictionaries();
 		classification = "<TEXT>" + classification + "</TEXT>";
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		try {
@@ -331,6 +333,8 @@ public class PreProcessing {
 				np.addNamedEntity(nodes.item(0).getTextContent(),
 						NounPhrase.Classification.LOCATION);
 				// System.out.println(bob + " Loc");
+				if(d.statesAndProvinces.contains(bob))
+					np.setCountry(true);
 			}
 			nodes = doc.getElementsByTagName("MISC");
 			for (int i = 0; i < nodes.getLength(); i++) {
@@ -481,6 +485,7 @@ public class PreProcessing {
 		// check if the nounphrase contains a pronoun
 
 		setViewPoint(temp, d);
+		setHeadClassification(temp, d);
 		return temp;
 	}
 
@@ -537,4 +542,22 @@ public class PreProcessing {
 		else
 			nounPhrase.setGender(NounPhrase.Gender.NONE);
 	}
+	
+	private void setHeadClassification(NounPhrase phrase, Dictionaries d){
+		
+		String[] headStrings = phrase.getHeadPhrase().split(" ");
+		for(String word: headStrings){
+			if(d.personPronouns.contains(word.toLowerCase())){
+				phrase.setHeadClassification(NounPhrase.Classification.PERSON);
+				return;
+			}
+			try {
+				NounPhrase.Classification classTemp = parserUtil.checkWordnetClass(word);
+				if(classTemp != null){
+					phrase.setHeadClassification(classTemp);
+				}
+			} catch (Exception e) {//just ignore the exception.
+				}
+			}
+		}
 }
