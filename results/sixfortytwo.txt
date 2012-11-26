@@ -1,0 +1,99 @@
+RESOLVED:  pigs (25) <=  pig (26)
+RESOLVED:  areas (15) <=  areas (21)
+RESOLVED:  CSF (3) <=  CSF (7)
+RESOLVED:  CSF (7) <=  CSF (24)
+RESOLVED:  pigs (18) <=  pigs (25)
+RESOLVED:  pigs (16) <=  pigs (18)
+RESOLVED:  classical swine fever (2) <=  CSF (3)
+RESOLVED:  the Norfolk breeding unit (X5) <=  It (5)
+RESOLVED:  outbreak (8) <=  outbreak (23)
+RESOLVED:  area (1) <=  area (13)
+Number of pronouns resolved: 0 (0.00)
+Number of common nouns resolved: 6 (0.35)
+Number of proper nouns resolved: 4 (0.50)
+Response resolutions: 26
+Truth resolutions: 29
+Total correct: 10
+Document 1 Score:  0.34
+
+RESOLVED:  cases (5) <=  cases (6)
+RESOLVED:  cases (10) <=  cases (14)
+RESOLVED:  cases (6) <=  cases (8)
+RESOLVED:  cases (8) <=  cases (9)
+RESOLVED:  11 additional (X2) <=  cases (2)
+RESOLVED:  1983 (3) <=  1983 (11)
+RESOLVED:  cases (9) <=  cases (10)
+There are no pronouns to resolve in this document.
+Number of common nouns resolved: 7 (0.50)
+Number of proper nouns resolved: 0 (0.00)
+Response resolutions: 17
+Truth resolutions: 17
+Total correct: 7
+Document 2 Score:  0.41
+
+RESOLVED:  we (6) <=  we (10)
+RESOLVED:  outbreaks (19) <=  the outbreaks (20)
+RESOLVED:  the outbreaks (20) <=  these outbreaks (22)
+RESOLVED:  still (X9) <=  that lot (14)
+RESOLVED:  you (16) <=  Dr. Volkmer (17)
+RESOLVED:  I (2) <=  I (9)
+RESOLVED:  Dr. Volkmer (17) <=  Dr. Volkmer (21)
+Number of pronouns resolved: 0 (0.00)
+Number of common nouns resolved: 4 (0.24)
+Number of proper nouns resolved: 3 (1.50)
+Response resolutions: 19
+Truth resolutions: 24
+Total correct: 7
+Document 3 Score:  0.29
+
+RESOLVED:  transplantation (3) <=  transplantation (9)
+RESOLVED:  disease (X1) <=  disease (1)
+RESOLVED:  infection (12) <=  Infection (13)
+RESOLVED:  disease (4) <=  disease (25)
+RESOLVED:  disease (1) <=  disease (2)
+RESOLVED:  T. cruzi (14) <=  T. cruzi (16)
+RESOLVED:  T. cruzi (8) <=  T. cruzi (11)
+RESOLVED:  disease (2) <=  disease (4)
+RESOLVED:  US (10) <=  US (19)
+RESOLVED:  T. cruzi (16) <=  T. cruzi (17)
+RESOLVED:  T. cruzi (11) <=  T. cruzi (14)
+Number of pronouns resolved: 0 (0.00)
+Number of common nouns resolved: 5 (0.31)
+Number of proper nouns resolved: 6 (0.60)
+Response resolutions: 26
+Truth resolutions: 27
+Total correct: 11
+Document 4 Score:  0.41
+
+RESOLVED:  proteins (17) <=  proteins (18)
+RESOLVED:  Newcastle disease (36) <=  Newcastle disease (39)
+RESOLVED:  virulence (50) <=  virulence (29)
+RESOLVED:  proteins (X17) <=  proteins (17)
+RESOLVED:  Victoria (38) <=  Victoria (41)
+RESOLVED:  flocks (9) <=  flocks (11)
+RESOLVED:  strains (22) <=  strains (25)
+RESOLVED:  virus (15) <=  virus (27)
+RESOLVED:  strains (25) <=  strains (28)
+RESOLVED:  virulence (29) <=  virulence (51)
+RESOLVED:  poultry (2) <=  poultry (8)
+RESOLVED:  virulence (51) <=  virulence (32)
+RESOLVED:  virus (X13) <=  virus (13)
+RESOLVED:  poultry (X2) <=  poultry (2)
+RESOLVED:  Newcastle disease (26) <=  Newcastle disease (36)
+RESOLVED:  Australia (37) <=  Australia (40)
+RESOLVED:  flocks (4) <=  flocks (9)
+RESOLVED:  Newcastle disease (14) <=  Newcastle disease (26)
+RESOLVED:  virus (13) <=  virus (15)
+RESOLVED:  Newcastle disease (12) <=  Newcastle disease (14)
+RESOLVED:  poultry (8) <=  poultry (35)
+Number of pronouns resolved: 0 (0.00)
+Number of common nouns resolved: 15 (0.50)
+Number of proper nouns resolved: 6 (0.55)
+Response resolutions: 40
+Truth resolutions: 43
+Total correct: 21
+Document 5 Score:  0.49
+
+-------------------------------------------------
+Final accuracy score: 0.4000
+-------------------------------------------------

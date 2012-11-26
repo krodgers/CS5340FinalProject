@@ -1,17 +1,19 @@
 import java.util.ArrayList;
 
 public class NounPhrase {
-	
+
 	public enum Classification { NONE, PERSON, ORGANIZATION, LOCATION, MISC, PERCENT, MONEY, DATE, TIME };
-	public enum Gender {NONE, MALE, FEMALE};
+	public enum Gender {NONE, MALE, FEMALE, NEUTER};
 	public enum Person {FIRST, SECOND, THIRD};
+	public enum Article {DEFINITE, INDEFINITE, NONE, DEMONSTRATIVE};//IF ART = A, an => indefinite. //if Art = the =>definite
 	private String id;  // from <Coref id = ""
 	//private String phrase; // <Coref > phrase </Coref>
 	private String ref; // from <Coref ref = ""
-	private Classification classification;  // NER classification
+	private Classification HeadClassification;  // NER classification
 	private Gender gender;
 	private Person person;
 	private Boolean plural;
+	private Boolean refFullHeadMatch;
 	private int sentenceID;
 	private boolean containsPronoun;
 	private ArrayList<String> posTags;
@@ -20,19 +22,21 @@ public class NounPhrase {
 	private String headPhrase;
 	private String pronoun;
 	private boolean isCountry;
-	
-	
-	
+	private Article article;
+
+
 	public NounPhrase() {
+		article = Article.NONE;
 		pronoun = null;
 		isCountry = false;
 		headPhrase = null;
+		refFullHeadMatch =false;
 		containsPronoun = false;
 		phrase = new ArrayList<String>();
 		posTags = new ArrayList<String>();
 		id = null;
 		ref = null;
-		classification = Classification.NONE;
+		HeadClassification = Classification.NONE;
 		person = Person.THIRD;
 		 gender  = Gender.NONE;
 		 plural = null;
@@ -56,7 +60,7 @@ public class NounPhrase {
 		this();
 		id = corefId;		
 	}
-	
+
 	public String getPhrase(){
 		if(phrase.size()>0){
 			String returnPhrase = phrase.get(0);
@@ -68,7 +72,7 @@ public class NounPhrase {
 		}
 		return null;
 	}
-	
+
 	public void addToPhrase(String phraseTok, String posTag){
 		posTags.add(posTag);
 		phrase.add(phraseTok);		
@@ -77,7 +81,7 @@ public class NounPhrase {
 	public void addNamedEntity(String entityPhrase, Classification organization) {
 		namedEntities.add(new NamedEntity(entityPhrase, organization));
 	}
-	
+
 	class NamedEntity{
 		String phrase;
 		Classification classification;
@@ -92,7 +96,7 @@ public class NounPhrase {
 	 * 
 	 */
 	public String getId() {
-		
+
 		return this.id;
 	}
 	/**
@@ -100,7 +104,7 @@ public class NounPhrase {
 	 * 
 	 */
 	public String getRef() {
-		
+
 		return this.ref;
 	}
 
@@ -115,7 +119,7 @@ public class NounPhrase {
 
 	public void addHeadPhrase(String headPhrase) {
 		this.headPhrase = headPhrase.trim();
-		
+
 	}
 	public String getHeadPhrase(){
 		return headPhrase;
@@ -127,7 +131,7 @@ public class NounPhrase {
 	public ArrayList<String> getPosTags(){
 		return posTags;
 	}
-	
+
 	public void setPronoun(Boolean isPronoun, String pronoun){
 		if(isPronoun){
 			this.pronoun = pronoun;
@@ -158,8 +162,11 @@ public class NounPhrase {
 		return plural != null ? plural : false;
 	}
 	public String getGender() {
-		
+
 		return this.gender.toString();
+	}
+	public Gender getRawGender(){
+		return gender;
 	}
 	public void setGender(Gender g)
 	{
@@ -190,10 +197,28 @@ public class NounPhrase {
 	public void setHeadPhrase(String s){
 		headPhrase = s;
 	}
+	public void setArticle(Article art){
+		this.article = art;
+	}
+	public Article getArticle(){
+		return article;
+	}
+
+	public Classification getHeadClass(){
+		return HeadClassification;
+	}
+	public void setHeadClassification(NounPhrase.Classification classify){
+		HeadClassification = classify;
+	}
+	public void setRefFullHeadMatch(Boolean res){
+		refFullHeadMatch = res;
+	}
+	public boolean refFullHeadMatch(){
+		return refFullHeadMatch;
+	}
 	@Override
 	public String toString()
 	{
 		return this.phrase + " ";
 	}
-	
 }

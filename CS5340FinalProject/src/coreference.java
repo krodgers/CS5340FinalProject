@@ -2,9 +2,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.lang.reflect.Array;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import edu.mit.jwi.Dictionary;
+import edu.mit.jwi.IDictionary;
 import edu.stanford.nlp.dcoref.Dictionaries;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
@@ -14,6 +18,7 @@ import edu.stanford.nlp.util.StringUtils;
 public class coreference {
 	public static Integer idCounter = 0;
 	private static Dictionaries d = new Dictionaries();
+	public static IDictionary dict;
 	/**
 	 * @param args
 	 */
@@ -28,9 +33,23 @@ public class coreference {
 		 * current label to give
 		 * 
 		 */
+		
 		String curDir = System.getProperty("user.dir");
 		//String serializedClassifier = curDir+ "/classifiers/english.all.3class.distsim.crf.ser.gz";
 		String serializedClassifier = curDir+ "/classifiers/english.conll.4class.distsim.crf.ser.gz";
+		String wnhome = System.getenv("WNHOME");
+		String path = wnhome + File.separator + "dict";
+		
+		URL url;
+		try {
+			url = new URL("file", null, path);
+			// construct the dictionary object and open it
+			dict = new Dictionary(url);
+			dict.open();
+		} catch (Exception e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 		
 		ArrayList<String> sentences = new ArrayList<String>();
 		CRFClassifier classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
@@ -77,16 +96,18 @@ public class coreference {
 			 */
 			corefSplit[0] = removeBegTXT(corefSplit[0]);
 			corefSplit[corefSplit.length-1] = removeFinTXT(corefSplit[corefSplit.length-1]);
-			
+
 
 			//Iterate over the splitArray:
 
 			/**
 			 * This part is experimental.  
 			 */
+			String docChunk = "";
 			for(int i = 0; i < Array.getLength(corefSplit); i++)
 			{
 				String currChunk = corefSplit[i];
+				
 				if(!currChunk.contains("<COREF ID="))
 					continue;
 				int startIdx = currChunk.indexOf(">");
@@ -99,7 +120,7 @@ public class coreference {
 				//split sentences
 				ArrayList<String> unProcSentences = processor.splitSentences(currChunk, curDir);
 				//end preprocess
-				
+
 				/*
 				 * process coreference into a nounphrase 
 				 */
@@ -129,23 +150,25 @@ public class coreference {
 				}				
 				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
-					nounPhraseMap.put(np.getPhrase(), np);
+					if(np != null){
+						nounPhraseMap.put("X"+idCounter, np);
 					nounPhrasesList.add(np);
 				}
-				
+				}
+
 				//StringMatcher matcher = new StringMatcher(nounPhrasesNotMapRefactorMe, phrase);
 				//matcher.setList(n);
 				//matcher.setCoref(corefNP);
-				
-				
-				//processor.test();
 				int matchId = -1;
 				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
 				if(matchId > -1){
 					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
 					idCounter++;
-				}
+				}//else{//the following three lines will match the coref to the closest nounphrase
 				
+				if(corefNP.hasPronoun() && nounPhrasesList.size() > 0){
+						StringMatcher.CreateMatch(nounPhrasesList.size()-1, nounPhrasesList, corefNP, idCounter);
+						idCounter++;
 				Hobb h = new Hobb();
 				if(corefNP.hasPronoun()&& (corefNP.getRef() != null))
 				{
@@ -155,15 +178,27 @@ public class coreference {
 				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
 				
 			}
+//				//begin hobbs
+//				Hobb h = new Hobb();
+//				if(corefNP.hasPronoun())
+//				{
+//					h.runHobbs(corefNP, docChunk,  nounPhraseMap, classifier, d);
+//				}
+				docChunk += corefNP.getPhrase();
+				nounPhrasesList.add(corefNP);//add coref to noun phrase lists
+				nounPhraseMap.put("X"+idCounter, corefNP);
+
+			}
 			StringMatcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir, nounPhrasesList);
-			idCounter = 1;
+			idCounter = 0;
 			nounPhrasesList.clear();
 			nounPhraseMap.clear();
-				
+
+
 		}	
 
 	}
-	
+
 	private static ArrayList<NounPhrase> extractNounPhrase(String sent, CRFClassifier classifier, PreProcessing processor) {
 		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
@@ -172,16 +207,19 @@ public class coreference {
 		for(Tree t : npTrees){
 			//call the createNP method in PreProcessing.java file which will extract the Noun phrases
 			//from the np tree and populate the features of each extracted nounphrase
-			if((np = processor.createNP(t,classifier,d)) != null)
-				addCandidate.add(np);
-			
+		if(t.value().equals("NP") && t.isPrePreTerminal())
+			addCandidate.add(processor.createNP(t, classifier, d));	
+		else
+			for(Tree child:t.getChildrenAsList())
+				if(child.isPhrasal())
+					addCandidate.add(processor.createNP(t, classifier, d));			
 		}
 		return addCandidate;
 	}
-	
+
 	private static ArrayList<NounPhrase> extractSplitNounPhrases(String sent,
 			CRFClassifier classifier, PreProcessing processor) {
-		
+
 		ArrayList<NounPhrase> returnCandidates = new ArrayList<NounPhrase>();
 		ArrayList<Tree> npTrees = parserUtil.fullParse(sent);
 		//the full parser will populate npTrees and the following will extract AND process(featurize) NP's
@@ -199,7 +237,7 @@ public class coreference {
 	}
 
 	private static NounPhrase NPcreateCorefNP(String currentCoref, String idNum, PreProcessing processor, CRFClassifier classifier) {
-		NounPhrase corefNP;//this is the nounphrase object that will contain the coref
+		NounPhrase corefNP = null;//this is the nounphrase object that will contain the coref
 		if(currentCoref.contains(">"))
 			currentCoref = currentCoref.replace(">", "");
 		//take the current coref and run a full parse on it
@@ -216,6 +254,7 @@ public class coreference {
 		Tree corefTree = corefNPTree.get(0);
 		//create
 		corefNP = processor.createNP(corefTree, classifier, d);
+		if(corefNP != null)
 		corefNP.setId(idNum);
 		return corefNP;
 	}
@@ -252,7 +291,7 @@ public class coreference {
 		}
 		return files;
 	}
-	
+
 	private static String removeBegTXT(String doc){
 		if(doc.contains("<TXT>")){
 			doc =  doc.substring(doc.indexOf(">")+1).trim();
@@ -266,5 +305,7 @@ public class coreference {
 	}
 	
 	
+
+
 
 }

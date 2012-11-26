@@ -1,0 +1,31 @@
+RESOLVED:  Reid (17) <=  Reid (23)
+RESOLVED:  Reid (36) <=  Reid (46)
+RESOLVED:  Reid (25) <=  a Vietnam veteran (26)
+RESOLVED:  he (53) <=  he (10)
+RESOLVED:  the plane (29) <=  single-engine Cessna 177B Cardinal (30)
+RESOLVED:  Joe Reid (6) <=  Reid (17)
+RESOLVED:  Reid (25) <=  Reid (36)
+RESOLVED:  REID (2) <=  FLIGHT-INSTRUCTOR (3)
+RESOLVED:  REID (2) <=  JOE REID (4)
+RESOLVED:  a member of the San Mateo County Airport Land Use Committee (51) <=  chairman of the annual Half Moon Bay Fly-In and Air Show (52)
+RESOLVED:  JOE REID (4) <=  Joe Reid (6)
+RESOLVED:  I (39) <=  I (41)
+RESOLVED:  Reid (23) <=  Reid (25)
+RESOLVED:  Reid (46) <=  an exceptional (47)
+RESOLVED:  his (12) <=  his (27)
+RESOLVED:  Reid (46) <=  Reid (48)
+RESOLVED:  his (11) <=  his (12)
+RESOLVED:  her (38) <=  her (40)
+RESOLVED:  He (15) <=  real by-the-book guy (16)
+RESOLVED:  Joe Reid (6) <=  Joe (35)
+Number of pronouns resolved: 0 (0.00)
+Number of common nouns resolved: 6 (0.55)
+Number of proper nouns resolved: 14 (0.61)
+Response resolutions: 46
+Truth resolutions: 50
+Total correct: 20
+Document 17 Score:  0.40
+
+-------------------------------------------------
+Final accuracy score: 0.4000
+-------------------------------------------------

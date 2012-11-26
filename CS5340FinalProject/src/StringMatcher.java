@@ -1,5 +1,6 @@
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -8,8 +9,8 @@ import java.util.ArrayList;
  *
  */
 public class StringMatcher {
-	
-	
+
+
 	/**
 	 * This method will compare a coreference against a candidate NounPhrase. Specifically,
 	 * this method will compare the coreference's Named entities against the candidate's named entities
@@ -42,12 +43,12 @@ public class StringMatcher {
 		}
 		return 0;
 	}
-		
+
 	public static int partialHeadMatch(NounPhrase candidate, NounPhrase coref){
 		for(String c : candidate.getHeadPhrase().split(" "))
 			for(String cr : coref.getHeadPhrase().split(" ")){
 				if(c.toLowerCase().trim().equals(cr.toLowerCase().trim()))
-					return 1;				
+					return 2;				
 			}
 		for(String c : candidate.getHeadPhrase().split(" "))
 			for(String cr : coref.getHeadPhrase().split(" ")){
@@ -59,7 +60,7 @@ public class StringMatcher {
 			}
 		return 0;
 	}
-	
+
 	/**
 	 * This method will take a candidate Noun phrase and compare its head phrase with the coreference's
 	 * Head phrase.
@@ -70,13 +71,14 @@ public class StringMatcher {
 	public static int fullStringMatchHeads(NounPhrase candidate, NounPhrase coref){
 		String candHead = candidate.getHeadPhrase();
 		String corefHead = coref.getHeadPhrase();
-		if(candHead.equals(corefHead))
+		if(candHead.equals(corefHead)){
 			return 2;
+		}
 		if(candidate.getHeadPhrase().contains(coref.getHeadPhrase()))
 			return 1;
 		return 0;
 	}
-	
+
 	public static int containsStringMatch(NounPhrase candidate, NounPhrase coref){
 		String candPhrase = candidate.getPhrase();
 		String corefPhrase = candidate.getPhrase();
@@ -89,18 +91,18 @@ public class StringMatcher {
 		else
 			return 0;
 	}
-	
+
 	public static int distance(NounPhrase candidate, NounPhrase coref){
 		String candPhrase = candidate.getPhrase();
 		String corefPhrase = candidate.getPhrase();
 		if(parserUtil.computeLevenshteinDistance(candPhrase, corefPhrase) <= 8){
-			return 2;
+			return 1;
 		}
 		else
 			return 0;
 	}
 	public static int pluralityMatch(NounPhrase candidate, NounPhrase coref){
-		if((!candidate.isPlural() && !coref.isPlural()) || (candidate.isPlural() && coref.isPlural()))
+		if((candidate.isPlural() && coref.isPlural()))
 			return 1;
 		else
 			return 0;
@@ -123,8 +125,14 @@ public class StringMatcher {
 			NounPhrase candidate = list.get(i);
 			score = fullStringMatchHeads(candidate, coref);
 			score += matchNE(candidate, coref);
-			score += containsStringMatch(candidate, coref);
+			//score += containsStringMatch(candidate, coref);
 			score += partialHeadMatch(candidate, coref);
+			score += (candidate.getArticle() == coref.getArticle()) ? 1 : 0;
+			if((coref.getGender() == candidate.getGender()) && (coref.isPlural() == candidate.isPlural()) && coref.getRawGender() != NounPhrase.Gender.NONE)
+				score += 1;
+			if((coref.getHeadClass() == candidate.getHeadClass()) && coref.getHeadClass() != NounPhrase.Classification.NONE)
+				score += 4;
+			//score += pluralityMatch(candidate, coref);
 			if(score > bestScore){
 				bestIndex = i;
 				bestScore = score;
@@ -150,15 +158,17 @@ public class StringMatcher {
 	 */
 	public static void CreateMatch(int matchId, ArrayList<NounPhrase> list, NounPhrase coref, Integer idCounter) {
 		//check to see if matched item is a previous coref
-		
+
 		NounPhrase match = list.get(matchId);
-		
+
 		if(list.get(matchId).getId() == null){
 			//not coref
 			//set ID
 			String ref = "X" + idCounter;
 			match.setId(ref);
 			//set coref ref tag to the match's id
+			if(fullStringMatchHeads(list.get(matchId), coref) > 1)
+				list.get(matchId).setRefFullHeadMatch(true);
 			coref.setRef(ref);
 		}
 		else{
@@ -166,11 +176,11 @@ public class StringMatcher {
 			//just set the coref's ref to be the id of the old coref
 			coref.setRef(match.getId());
 		}
-		
+
 	}
-	
-	
-	
+
+
+
 	/**
 	 * this method will cycle through a list of nounphrases and if it has a reference
 	 * or Id the reference will be written to the file.
@@ -179,25 +189,33 @@ public class StringMatcher {
 	 * @param list the list of candidates(which contain all coreferences)
 	 */
 	public static void printMatchesToFile(String filePrefix, String dir, ArrayList<NounPhrase> list){
-		
+
 		//Print out results
 		String outFile = dir + filePrefix + ".response";
 		try {
 			BufferedWriter bw = new BufferedWriter(new FileWriter(outFile));
 			bw.write("<TXT>");
 			String res = "";
+			String regex = "\\/";
 			for(NounPhrase n : list)
 			{
 				if(n.getId() != null)
 				{
-					
-					if(n.getRef() != null)
-						res = "<COREF ID=\"" + n.getId() + "\" REF=\"" + n.getRef() + "\"> " + n.getPhrase() + "</COREF>";
+					String phrase = "";
+					if(n.getHeadPhrase() != null)
+						phrase = n.getHeadPhrase().replaceAll(regex, "");
 					else
-						res = "<COREF ID=\"" + n.getId() + "\"> " + n.getPhrase() + "</COREF>";
+						phrase = n.getRef();
+					if(n.getRef() != null){
+						res = "<COREF ID=\"" + n.getId() + "\" REF=\"" + n.getRef() + "\">" + phrase + "</COREF>";
+					}
+					else{
+					
+							res = "<COREF ID=\"" + n.getId() + "\">" + phrase + "</COREF> ";
+					}
 					bw.write(res, 0, res.length());
 				}	
-				
+
 			}
 			bw.write("</TXT>");
 			bw.close();
@@ -205,9 +223,9 @@ public class StringMatcher {
 			System.err.println("Problems writing results.");
 			e.printStackTrace();
 		}
-		
+
 		//System.out.println("");
-		
+
 		for(int i = 0; i < list.size(); i ++){
 			String outString = "";
 			NounPhrase temp = list.get(i);
@@ -219,10 +237,9 @@ public class StringMatcher {
 			}
 			//if(!outString.equals(""))
 				//System.out.println(outString);
-			
+
 		}
-		
+
 		//System.out.println("");
 	}
-
-}
+	}
