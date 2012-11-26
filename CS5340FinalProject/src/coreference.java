@@ -147,7 +147,7 @@ public class coreference {
 				}
 				
 				Hobb h = new Hobb();
-				if(corefNP.hasPronoun())
+				if(corefNP.hasPronoun()&& (corefNP.getRef() != null))
 				{
 					h.runHobbs(corefNP, currChunk,  nounPhraseMap);
 				}

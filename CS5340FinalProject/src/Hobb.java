@@ -11,6 +11,18 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.dcoref.Dictionaries;
 public class Hobb {
 
+	private static Dictionaries d;
+	
+	public Hobb()
+	{
+		d = new Dictionaries();
+		d.animatePronouns.remove("they");
+		d.animatePronouns.remove("them");
+		d.animatePronouns.remove("theirs");
+		d.animatePronouns.remove("their");
+		
+		
+	}
 	/**
 	 * Runs Hobb's
 	 * @param corefNP     a NounPhrase of the current coref phrase
@@ -29,21 +41,15 @@ public class Hobb {
 		//Do full parse of sentences
 		//Get the NP in order
 		ArrayList<String> npList = new ArrayList<String>();
-		ArrayList<Tree> parsedNP;
 		boolean matched = false;
 
-		// Parse the sentence
-		parsedNP = parserUtil.fullParse(sents.get(sents.size() - 1));
 		// Find Gender info about coref
 		findGender(corefNP);
 		findPlurality(corefNP);
-		if(parsedNP != null && sents.size() > 1)
+		if(sents.size() > 1)
 		{
-			// Get the NPs out of the sentence
-			for(Tree t : parsedNP)
-			{
-				npList.add(createNP(t).getPhrase());
-			}
+			// Parse the sentence
+			findNPS(sents.get(sents.size()-1), npList);
 			// Start in same sentence as coref; search R-> L
 			for(int i = npList.size() - 1; i >= 0; i--)
 			{
@@ -58,19 +64,12 @@ public class Hobb {
 			for(int x = sents.size() - 2; x >= 0; x--)
 			{
 				npList.clear();
-				parsedNP = parserUtil.fullParse(sents.get(x));
-				if(parsedNP != null)
+				findNPS(sents.get(x),npList);
+				for(int i = 0; i < npList.size(); i++)
 				{
-					for(Tree t: parsedNP)
-					{
-						npList.add(createNP(t).getPhrase());
-					}
-					for(int i = 0; i < npList.size(); i++)
-					{
-						matched = scoreNP(corefNP, NPList.get(npList.get(i)));
-						if(matched)
-							return true;
-					}
+					matched = scoreNP(corefNP, NPList.get(npList.get(i)));
+					if(matched)
+						return true;
 				}
 			}
 		}
@@ -80,19 +79,12 @@ public class Hobb {
 			for(int x = sents.size() - 1; x >= 0; x--)
 			{
 				npList.clear();
-				parsedNP = parserUtil.fullParse(sents.get(x));
-				if(parsedNP != null)
+				findNPS(sents.get(x),npList);
+				for(int i = 0; i < npList.size(); i++)
 				{
-					for(Tree t: parsedNP)
-					{
-						npList.add(createNP(t).getPhrase());
-					}
-					for(int i = 0; i < npList.size(); i++)
-					{
-						matched = scoreNP(corefNP, NPList.get(npList.get(i)));
-						if(matched)
-							return true;
-					}
+					matched = scoreNP(corefNP, NPList.get(npList.get(i)));
+					if(matched)
+						return true;
 				}
 			}
 		}
@@ -103,14 +95,22 @@ public class Hobb {
 			In S-2, L->R
 			In current sentence, L->R, starting from R of PRO
 		 */
-		
-		
 		return false;
 	}
 	
 	
+	private void findNPS(String sentence, ArrayList<String> npList) {
+		// TODO Auto-generated method stub
+		ArrayList<Tree> parsedNP;
+		parsedNP = parserUtil.fullParse(sentence);
+		// Get the NPs out of the sentence
+		for(Tree t : parsedNP)
+		{
+			npList.add(createNP(t).getPhrase());
+		}
+		
+	}
 	private void findPlurality(NounPhrase corefNP) {
-		Dictionaries d = new Dictionaries();
 		if(d.pluralPronouns.contains(corefNP.getHeadPhrase()))
 			corefNP.setPlural(true);
 		else
@@ -125,7 +125,6 @@ public class Hobb {
 	private void findGender(NounPhrase nounPhrase) {
 		if(nounPhrase == null)
 			return;
-		Dictionaries d = new Dictionaries();
 		if(d.femaleWords.contains(nounPhrase.getHeadPhrase()))
 				nounPhrase.setGender(NounPhrase.Gender.FEMALE);
 		else if(d.maleWords.contains(nounPhrase.getHeadPhrase()))
@@ -198,16 +197,6 @@ public class Hobb {
 		return false;
 	}
 	
-
-	private String arrayToString(ArrayList<String> list)
-	{
-		String temp = "";
-		for(String s : list)
-		{
-			temp += s + " ";
-		}
-		return temp.trim();
-	}
 		
 }
 
