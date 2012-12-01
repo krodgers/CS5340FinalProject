@@ -7,19 +7,19 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.annotation.processing.Processor;
+
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.dcoref.Dictionaries;
 public class Hobb {
 
-	private static Dictionaries d;
 	
 	public Hobb()
 	{
-		d = new Dictionaries();
-		d.animatePronouns.remove("they");
-		d.animatePronouns.remove("them");
-		d.animatePronouns.remove("theirs");
-		d.animatePronouns.remove("their");
+		coreference.d.animatePronouns.remove("they");
+		coreference.d.animatePronouns.remove("them");
+		coreference.d.animatePronouns.remove("theirs");
+		coreference.d.animatePronouns.remove("their");
 		
 		
 	}
@@ -30,8 +30,9 @@ public class Hobb {
 	 * @param NPList		the map of the featurized nounphrases
 	 * @return
 	 */
-	public boolean runHobbs(NounPhrase corefNP, String context, HashMap<String, NounPhrase> NPList)
+	public boolean runHobbs(NounPhrase corefNP, String context, HashMap<String, NounPhrase> NPList) throws Exception
 	{
+		try{
 		if(context.isEmpty())
 			return false;
 		//Split sentences
@@ -56,6 +57,7 @@ public class Hobb {
 				if(npList.get(i)== null)
 					continue;
 				findGender(NPList.get(npList.get(i)));
+				
 				matched = scoreNP(corefNP, NPList.get(npList.get(i)));
 				if(matched)
 					return true;
@@ -96,22 +98,37 @@ public class Hobb {
 			In current sentence, L->R, starting from R of PRO
 		 */
 		return false;
+		}catch(Exception e){
+			throw e;
+		}
 	}
 	
 	
 	private void findNPS(String sentence, ArrayList<String> npList) {
+		PreProcessing process = new PreProcessing();
 		// TODO Auto-generated method stub
 		ArrayList<Tree> parsedNP;
 		parsedNP = parserUtil.fullParse(sentence);
 		// Get the NPs out of the sentence
+		NounPhrase temp = null;
 		for(Tree t : parsedNP)
-		{
-			npList.add(createNP(t).getPhrase());
+		{		//call the createNP method in PreProcessing.java file which will extract the Noun phrases
+				//from the np tree and populate the features of each extracted nounphrase
+				
+			if(t.value().equals("NP") && t.isPrePreTerminal())
+				temp = process.createNP(t, coreference.classifiStat, coreference.d);
+			else
+				for(Tree child:t.getChildrenAsList())
+					if(child.isPhrasal())
+						temp = process.createNP(child, coreference.classifiStat, coreference.d);		
+			
+			if(temp != null)
+				npList.add(temp.getPhrase());
 		}
 		
 	}
 	private void findPlurality(NounPhrase corefNP) {
-		if(d.pluralPronouns.contains(corefNP.getHeadPhrase()))
+		if(coreference.d.pluralPronouns.contains(corefNP.getHeadPhrase()))
 			corefNP.setPlural(true);
 		else
 			corefNP.setPlural(false);
@@ -125,13 +142,13 @@ public class Hobb {
 	private void findGender(NounPhrase nounPhrase) {
 		if(nounPhrase == null)
 			return;
-		if(d.femaleWords.contains(nounPhrase.getHeadPhrase()))
+		if(coreference.d.femaleWords.contains(nounPhrase.getHeadPhrase()))
 				nounPhrase.setGender(NounPhrase.Gender.FEMALE);
-		else if(d.maleWords.contains(nounPhrase.getHeadPhrase()))
+		else if(coreference.d.maleWords.contains(nounPhrase.getHeadPhrase()))
 			nounPhrase.setGender(NounPhrase.Gender.MALE);
-		else if(d.femalePronouns.contains(nounPhrase.getHeadPhrase()))
+		else if(coreference.d.femalePronouns.contains(nounPhrase.getHeadPhrase()))
 			nounPhrase.setGender(NounPhrase.Gender.FEMALE);
-		else if(d.malePronouns.contains(nounPhrase.getHeadPhrase()))
+		else if(coreference.d.malePronouns.contains(nounPhrase.getHeadPhrase()))
 		nounPhrase.setGender(NounPhrase.Gender.MALE);
 		else
 			nounPhrase.setGender(NounPhrase.Gender.NONE);
@@ -144,15 +161,14 @@ public class Hobb {
 	 */
 	private NounPhrase createNP(Tree npTree) {
 		NounPhrase temp = new NounPhrase();//a new nounphrase cadidate
-		for(Tree t : npTree){
-			if(t.isPhrasal()){//checks if the noun phrase tree is the parent of some leaves
+		for(Tree t : npTree.getChildrenAsList()){
+			//if(t.isPhrasal()){//checks if the noun phrase tree is the parent of some leaves
 				for(Tree leaf :t.getLeaves()){//get all the leaves of the parent node
 					if(!leaf.value().equals("-LRB-") && !leaf.value().equals("-RRB-"))
 						temp.addToPhrase(leaf.value(), t.value());
 				}
-			}
-		}	
-		return temp;
+			//}
+		}			return temp;
 	}
 	//First Person
 //	I, me, my, mine, myself
@@ -173,12 +189,11 @@ public class Hobb {
 		{
 			return false;
 		}
-		Dictionaries d = new Dictionaries();
 		if((coref.getGender() == otherNP.getGender()) && (coref.isPlural() == otherNP.isPlural()))
 		{
 			if(coref.getPerson() != NounPhrase.Person.THIRD && (coref.getPerson() != otherNP.getPerson()))
 				return false;
-			if(d.animatePronouns.contains(coref.getHeadPhrase()) && d.inanimateWords.contains(otherNP.getHeadPhrase()))
+			if(coreference.d.animatePronouns.contains(coref.getHeadPhrase()) && coreference.d.inanimateWords.contains(otherNP.getHeadPhrase()))
 				return false;
 			if(otherNP.getId() == null)
 			{

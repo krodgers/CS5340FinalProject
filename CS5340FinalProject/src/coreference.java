@@ -10,6 +10,7 @@ import java.util.HashMap;
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.stanford.nlp.dcoref.Dictionaries;
+import edu.stanford.nlp.ie.AbstractSequenceClassifier;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.StringUtils;
@@ -17,8 +18,9 @@ import edu.stanford.nlp.util.StringUtils;
 
 public class coreference {
 	public static Integer idCounter = 0;
-	private static Dictionaries d = new Dictionaries();
+	public static Dictionaries d = new Dictionaries();
 	public static IDictionary dict;
+	public static AbstractSequenceClassifier classifiStat;
 	/**
 	 * @param args
 	 */
@@ -37,9 +39,8 @@ public class coreference {
 		String curDir = System.getProperty("user.dir");
 		//String serializedClassifier = curDir+ "/classifiers/english.all.3class.distsim.crf.ser.gz";
 		String serializedClassifier = curDir+ "/classifiers/english.conll.4class.distsim.crf.ser.gz";
-		String wnhome = System.getenv("WNHOME");
+		String wnhome = curDir + File.separator + "classifiers/WordNet";
 		String path = wnhome + File.separator + "dict";
-		
 		URL url;
 		try {
 			url = new URL("file", null, path);
@@ -53,6 +54,7 @@ public class coreference {
 		
 		ArrayList<String> sentences = new ArrayList<String>();
 		CRFClassifier classifier = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
+		classifiStat = CRFClassifier.getClassifierNoExceptions(serializedClassifier);
 		PreProcessing processor = new PreProcessing();
 		ArrayList<NounPhrase> nounPhrasesList = new ArrayList<NounPhrase>();
 		HashMap<String, NounPhrase> nounPhraseMap = new HashMap<String,NounPhrase>();
@@ -125,6 +127,9 @@ public class coreference {
 				 * process coreference into a nounphrase 
 				 */
 				NounPhrase corefNP;
+				if(currentCoref.contains(">")){
+					currentCoref = currentCoref.replace(">", "");
+				}
 				if((corefNP = NPcreateCorefNP(currentCoref, idNum, processor, classifier)) == null){
 					continue;
 				}
@@ -151,7 +156,7 @@ public class coreference {
 				//add all nounphrases from the chunk to hashmap of nounphrases
 				for(NounPhrase np: fullNPs){
 					if(np != null){
-						nounPhraseMap.put("X"+idCounter, np);
+						nounPhraseMap.put(np.getPhrase(), np);
 					nounPhrasesList.add(np);
 				}
 				}
@@ -160,26 +165,33 @@ public class coreference {
 				//matcher.setList(n);
 				//matcher.setCoref(corefNP);
 				int matchId = -1;
-				matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
+				if(!corefNP.hasPronoun())
+					matchId = StringMatcher.createScores(nounPhrasesList, corefNP);
 				if(matchId > -1){
 					StringMatcher.CreateMatch(matchId,nounPhrasesList, corefNP, idCounter);
 					idCounter++;
 				}//else{//the following three lines will match the coref to the closest nounphrase
 				
-				if(corefNP.hasPronoun() && nounPhrasesList.size() > 0){
+				
+				//begin hobbs
+				docChunk += currChunk.trim() + ".";
+				Hobb h = new Hobb();
+				if(corefNP.hasPronoun())
+				{
+					if(corefNP.getRef() == null)
+						try {
+							h.runHobbs(corefNP, docChunk,  nounPhraseMap);
+						} catch (Exception e) {
+						}
+					if(corefNP.getRef() == null){
 						StringMatcher.CreateMatch(nounPhrasesList.size()-1, nounPhrasesList, corefNP, idCounter);
 						idCounter++;
-				
-			}
-//				//begin hobbs
-//				Hobb h = new Hobb();
-//				if(corefNP.hasPronoun())
-//				{
-//					h.runHobbs(corefNP, docChunk,  nounPhraseMap, classifier, d);
-//				}
-				docChunk += corefNP.getPhrase();
+					}
+			
+				}
+				docChunk += corefNP.getPhrase() + " ";
 				nounPhrasesList.add(corefNP);//add coref to noun phrase lists
-				nounPhraseMap.put("X"+idCounter, corefNP);
+				nounPhraseMap.put(corefNP.getPhrase(), corefNP);
 
 			}
 			StringMatcher.printMatchesToFile(StringUtils.getBaseName(fileName, ".crf"), dir, nounPhrasesList);
@@ -205,7 +217,7 @@ public class coreference {
 		else
 			for(Tree child:t.getChildrenAsList())
 				if(child.isPhrasal())
-					addCandidate.add(processor.createNP(t, classifier, d));			
+					addCandidate.add(processor.createNP(child, classifier, d));			
 		}
 		return addCandidate;
 	}

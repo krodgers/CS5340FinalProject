@@ -156,19 +156,18 @@ public class PreProcessing {
 	 * This method will POSTag the array list of tokenized sentences The result
 	 * of the tagging will be an arrayList of posTags stored in
 	 */
-	public ArrayList<String[]> posTag(ArrayList<String[]> sentArrays) {
+	public ArrayList<String[]> posTag(String phrase) {
 		// set up tagger
 		POSTaggerME tagger;
 		POSModel model;
 		try {
+			String[] sentArray = phrase.split(" ");
 			modelIn = new FileInputStream("en-pos-maxent.bin");
 			model = new POSModel(modelIn);
 			tagger = new POSTaggerME(model);
 			ArrayList<String[]> posTags = new ArrayList<String[]>();
 			// tag each tokenized sentence array
-			for (String[] sentArray : sentArrays) {
 				posTags.add(tagger.tag(sentArray));
-			}
 			return posTags;
 
 		} catch (Exception e) {

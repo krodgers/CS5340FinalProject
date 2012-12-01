@@ -6,6 +6,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import opennlp.tools.coref.sim.SemanticCompatibility;
+
 import edu.mit.jwi.Dictionary;
 import edu.mit.jwi.IDictionary;
 import edu.mit.jwi.item.IIndexWord;
@@ -163,5 +165,9 @@ public class parserUtil {
 		if(phrase.equals("time") && clss.equals("EVENT"))
 			clss = "TIME";
 		return NounPhrase.Classification.valueOf(clss);
+	}
+	public static boolean isAlias(String cand, String coref){
+		
+		return false;
 	}
 }

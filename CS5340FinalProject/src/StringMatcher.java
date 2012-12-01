@@ -125,7 +125,7 @@ public class StringMatcher {
 			NounPhrase candidate = list.get(i);
 			score = fullStringMatchHeads(candidate, coref);
 			score += matchNE(candidate, coref);
-			//score += containsStringMatch(candidate, coref);
+			score += containsStringMatch(candidate, coref);
 			score += partialHeadMatch(candidate, coref);
 			score += (candidate.getArticle() == coref.getArticle()) ? 1 : 0;
 			if((coref.getGender() == candidate.getGender()) && (coref.isPlural() == candidate.isPlural()) && coref.getRawGender() != NounPhrase.Gender.NONE)
